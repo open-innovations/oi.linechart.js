@@ -191,6 +191,7 @@
 			<li><code>key</code> - an object defining a key</li>
 			<li><code>key.show</code> - is a key visible (default = <code>false</code>)</li>
 		</ul>
+		<p>You can also update the properties of the chart later using <code>chart.setProperties(props)</code>.</p>
 
 		<h2>Axis properties</h2>
 		<ul>
@@ -205,15 +206,34 @@
 			<li><code>grid.show</code> - a boolean value to set the visibility of the grid lines (default = <code>false</code>)</li>
 			<li><code>grid.stroke</code> - the stroke (default = <code>black</code>)</li>
 			<li><code>grid.stroke-width</code> - the stroke width (default = <code>1</code>)</li>
-			<li><code>labels</code> - an array of hard-coded tick labels</li>
+			<li><code>labels</code> - an object of hard-coded tick marks/labels</li>
+			<li><code>labels.value</code> - an object describing the label for <code>value</code></li>
+			<li><code>labels.value.label</code> - a string for the label</li>
+			<li><code>labels.value.fill</code> - a hex/rgb colour for the label fill</li>
+			<li><code>labels.value.length</code> - the length of the tick</li>
+			<li><code>labels.value.align</code> - <code>top</code> or <code>bottom</code> (default) for the x-axis or <code>left</code> (default) or <code>right</code> for the y-axis tick marks</li>
+			<li><code>labels.value.dx</code> - shift the label position horizontally</li>
+			<li><code>labels.value.dy</code> - shift the label position vertically</li>
 		</ul>
-		<h2>Functions</h2>
-		<p>The following functions are available:</p>
+		<h2>Add a series</h2>
+		<p>You can add a series using <code>chart.addSeries(data,attr)</code> where <code>data</code> is of the form <code>[{x:1,y:0.1},{x:2,y:0.2},{x:3,y:0.3}]</code> and <code>attr</code> is of the form:</p>
 		<ul>
-			<li><code>chart.setProperties(attr)</code> - update the chart properties. <code>attr</code> is of the form: </li>
-			<li><code>chart.addSeries(data)</code> - where <code>data</code> is an array of the form: <code>[{x:1,y:0.1},{x:2,y:0.2},{x:3,y:0.3}]</code></li>
-			<li><code>chart.draw()</code> - update the chart.</li>
+			<li><code>points</code> - an object styling the points</li>
+			<li><code>points.show</code> - a boolean to set the point visibility (default = true)</li>
+			<li><code>points.color</code> - the hex/rgb colour of the points</li>
+			<li><code>points.size</code> - either a number of function for setting the size of the points</li>
+			<li><code>points.stroke-width</code> - set the width of the stroke</li>
+			<li><code>line</code> - an object styling the line</li>
+			<li><code>line.show</code> - a boolean to set the line visibility (default = true)</li>
+			<li><code>line.color</code> - the hex/rgb colour of the  line</li>
+			<li><code>line.stroke-width</code> - set the width of the stroke</li>
+			<li><code>line.stroke-dasharray</code> - set the <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray">stroke's dash array</a></li>
+			<li><code>tooltip</code> - an object styling the tooltip</li>
+			<li><code>tooltip.label</code> - either a fixed string or a function that generates the tooltip text using properties of the data.</li>
 		</ul>
+		
+		<h2>Draw the chart</h2>
+		<p>Once you've set everything up you can finally draw the chart using <code>chart.draw()</code>.</p>
 
 
 
