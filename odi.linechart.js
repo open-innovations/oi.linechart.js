@@ -310,7 +310,7 @@
 						add(pts[i].title,pt);
 
 						if(attr.tooltip.label){
-							pt.addEventListener('mouseover',ptooltip);
+							pt.addEventListener('mouseover',function(e){ e.target.focus(); });
 							pt.addEventListener('focus',ptooltip);
 						}
 						add(pt,this.el);
