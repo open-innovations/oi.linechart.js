@@ -447,11 +447,11 @@
 
 		<section class="example" id="ex4">
 			<h2>Example 4 - dashed line, label alignment, and style tooltip</h2>
-			<p>This chart has a dashed line by setting the <code>stroke-dasharray</code> property.</p>
+			<p>This chart has a dashed line by setting the <code>stroke-dasharray</code> property. The tooltip is styled using CSS.</p>
 			<div class="example-code">
 				<style>
 				#chart4 { height: 400px; width: 100%; background: #111; padding: 2em; position: relative; animation-duration: 0.3s; }
-				#chart4 .linechart-series circle:focus { r:10; fill: #00B6FF; stroke: #00B6FF; }
+				#chart4 .linechart-series circle:focus { fill-opacity: 1; stroke-width: 3; }
 				#chart4 .linechart-tooltip { background: white; color: black; box-shadow: 2px 2px 3px rgba(0,0,0,0.3); padding: 0.5em 1em; }
 				#chart4 .linechart-tooltip::after { border-top-color: white; }
 				</style>
@@ -491,7 +491,7 @@
 					});
 					chart4.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
 						'title': 'Measured',
-						'points': {'show':false,'size':4,'stroke-width':0,'color':'none'},
+						'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
 						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
 						'tooltip':{
 							'label': function(d){
@@ -501,7 +501,7 @@
 					});
 					chart4.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
 						'title': 'Projected',
-						'points': {'show':false,'size':4,'stroke':'white','stroke-width':0,'color':'none'},
+						'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
 						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2, 'stroke-dasharray': '5,5' },
 						'tooltip':{
 							'label': function(d){

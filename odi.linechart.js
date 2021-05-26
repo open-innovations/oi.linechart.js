@@ -1,6 +1,6 @@
 /**
 	ODI Leeds line charts in SVG
-	Version 0.4.2
+	Version 0.4.3
   */
 (function(root){
 	// Part of the ODI namespace
@@ -218,7 +218,7 @@
 		function Series(s,data,props){
 			if(!data) data = [];
 			var attr,line,path,pts,o;
-			attr = {points:{show:true,color:'black','stroke-linecap':'round','stroke':'black','stroke-width':0},line:{show:true,color:'#000000','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round','stroke-dasharray':'','fill':'none'}};
+			attr = {points:{show:true,color:'black','stroke-linecap':'round','stroke':'black','stroke-width':0,'fill-opacity':1},line:{show:true,color:'#000000','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round','stroke-dasharray':'','fill':'none'}};
 			line = {};
 			path = "";
 			pts = [];
@@ -328,7 +328,7 @@
 						if(typeof attr.points.size==="number") r = Math.max(attr.points.size,r);
 						if(typeof attr.points.size==="function") r = attr.points.size.call(pt,{'series':s,'i':i,'data':data[i]});
 					}
-					setAttr(pts[i].el,{'r':r,'fill':attr.points.color,'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
+					setAttr(pts[i].el,{'r':r,'fill':attr.points.color,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
 					ps = getXY(data[i].x,data[i].y);
 					p.push(ps);
 
@@ -448,9 +448,8 @@
 
 			t = '<style>';
 			t += '\t.'+lbl+'-series circle { transition: transform '+duration+' linear, r '+duration+' linear; }\n';
-			t += '\t.'+lbl+'-series circle:focus { stroke: black; stroke-width: 4; }\n';
+			t += '\t.'+lbl+'-series circle:focus { stroke-width: 4; }\n';
 			t += '\t.'+lbl+'-series:hover path.line, .'+lbl+'-series.on path.line { cursor:pointer; }\n';
-			t += '\t.'+lbl+'-series path.line.dotted { stroke-dasharray: 12 20 }\n';
 			for(i = 0; i < series.length; i++){
 				series[i].update();
 				t += '\t.'+lbl+'-series-'+(i+1)+':hover path.line, .'+lbl+'-series-'+(i+1)+'.on path.line { stroke-width: '+(series[i].getProperty('stroke-width-hover')||4)+'; }\n';
