@@ -1,6 +1,6 @@
 /**
 	ODI Leeds line charts in SVG
-	Version 0.4.3
+	Version 0.4.4
   */
 (function(root){
 	// Part of the ODI namespace
@@ -17,7 +17,7 @@
 			console.error('No element to attach to');
 			return this;
 		}
-		var w,h,ns,loader,svg,series,xmin,ymin,xmax,ymax,defs,key,duration,opt,axes,fo,lbl;
+		var w,h,ns,loader,svg,series,xmin,ymin,xmax,ymax,defs,key,duration,opt,axes,fo,lbl,events;
 		if(!attr) attr = {};
 
 		// Add loader icon to chart
@@ -26,13 +26,14 @@
 		this.el = el;
 		lbl = 'linechart';
 		ns = 'http://www.w3.org/2000/svg';
-		duration = attr.duration||"0.3s";
+		duration = (typeof attr.duration==="number" ? attr.duration : "0s");
 		w = el.clientWidth;
 		h = el.clientHeight;
 		var sty = getComputedStyle(el);
 		h -= parseFloat(sty.paddingTop) + parseFloat(sty.paddingBottom);
 		w -= parseFloat(sty.paddingLeft) + parseFloat(sty.paddingRight);
 		series = [];
+		events = {};
 		opt = {
 			'left':0,'top':0,'right':0,'bottom':0,'tick':5,'font-size': 16,'tooltip':{},
 			'key':{'show':false,'border':{'stroke':'black','stroke-width':1,'fill':'none'},'text':{'text-anchor':'start','dominant-baseline':'hanging','font-weight':'bold','fill':'black','stroke-width':0,'font-family':'sans-serif'}},
@@ -56,14 +57,39 @@
 		axes.x.setProperties(opt.axis.x||{});
 		axes.y.setProperties(opt.axis.y||{});
 
+		this.on = function(ev,attr,cb){
+			if(typeof attr==="function"){
+				cb = clone(attr);
+				delete attr;
+			}
+			events[ev] = new Event(attr,cb);
+			return this;
+		};
+		this.off = function(ev){
+			delete events[ev];
+			return this;
+		}
 		this.getSVG = function(){
 			svg.querySelectorAll('animate').forEach(function(e){ e.parentNode.removeChild(e); });
 			return svg.outerHTML;
 		};
 		this.setProperties = function(a){
 			merge(opt, a||{});
+			axes.x.setProperties(opt.axis.x||{});
+			axes.y.setProperties(opt.axis.y||{});
 			return this;
 		};
+		function Event(attr,cb){
+			if(typeof attr==="function"){
+				cb = attr;
+				attr = {};
+			}
+			this.trigger = function(props){
+				var a = attr;
+				merge(a,props);
+				cb.call(a['this']||this,a);
+			}
+		}
 		function showTooltip(e,s,i,d,tt){
 			var txt,tip,c,bb,bbo;
 			if(!fo) return;
@@ -92,11 +118,13 @@
 			bbo = svg.getBoundingClientRect(); // Bounding box of SVG holder
 			tip.setAttribute('style','position:absolute;left:'+Math.round(bb.left + bb.width/2 - bbo.left + el.scrollLeft)+'px;top:'+Math.round(bb.top + bb.height/2 - bbo.top)+'px;transform:translate3d(-50%,-100%,0);display:'+(txt ? 'block':'none'));
 			add(fo,svg);
+			if(events.showtooltip) events.showtooltip.trigger({'i':i});
 			return true;
 		}
 		function clearTooltip(){
 			var tip = qs(svg,'.'+lbl+'-tooltip');
 			if(tip) tip.parentNode.removeChild(tip);
+			if(events.hidetooltip) events.hidetooltip.trigger();
 			return true;
 		}
 		function getXY(x,y){
@@ -239,6 +267,11 @@
 				line.el.classList.add('on');
 				return this;
 			};
+			this.selectItem = function(i){
+				if(i >= 0 && pts[i].el) ptooltip({'target':pts[i].el});
+				else clearTooltip();
+				return this;
+			}
 			this.deselect = function(){
 				line.el.classList.remove('on');
 				return this;
@@ -315,8 +348,7 @@
 						}
 						add(pt,this.el);
 						// Add animations
-						pts[i].cx = new Animate(pts[i].el);
-						pts[i].cy = new Animate(pts[i].el);
+						pts[i].c = new Animate(pts[i].el);
 					}
 				}
 
@@ -333,8 +365,7 @@
 					p.push(ps);
 
 					// Update point position
-					pts[i].cx.set({'cx':{'from':pts[i].old.x||null,'to':ps.x}});
-					pts[i].cy.set({'cy':{'from':pts[i].old.y||null,'to':ps.y}});
+					pts[i].c.set({'cx':{'from':pts[i].old.x||null,'to':ps.x},'cy':{'from':pts[i].old.y||null,'to':ps.y}});
 					pts[i].old = ps;
 				}
 
@@ -359,9 +390,10 @@
 			if(!attr) attr = {};
 			as = {};
 			// Find duration
-			if(sty['animation-duration'] != "0s") this.duration = sty['animation-duration'];
+			if(sty['animation-duration']) this.duration = sty['animation-duration'];
 			if(attr.duration) this.duration = attr.duration;
 			if(!this.duration) this.duration = duration;
+			this.duration = parseFloat(this.duration);
 			this.set = function(props){
 				var n,i,a2,b2,a,b;
 				e.querySelectorAll('animate').forEach(function(ev){ ev.parentNode.removeChild(ev); });
@@ -511,7 +543,7 @@
 			}
 			t += '\t.'+lbl+'-grid.'+lbl+'-grid-x .'+lbl+'-grid-title,.'+lbl+'-grid.'+lbl+'-grid-y .'+lbl+'-grid-title { text-anchor: middle; dominant-baseline: central; }\n';
 			t += '\t.'+lbl+'-grid.'+lbl+'-grid-x text { dominant-baseline: hanging; }\n';
-			t += '\t.'+lbl+'-grid.'+lbl+'-grid-y text { dominant-baseline: '+(opt.axis.y.labels.baseline||"middle")+'; }\n';
+			t += '\t.'+lbl+'-grid.'+lbl+'-grid-y text { dominant-baseline: '+((opt.axis.y.labels ? opt.axis.y.labels.baseline : '')||"middle")+'; }\n';
 			t += '\t.'+lbl+'-tooltip { background: black; color: white; padding: 0.25em 0.5em; margin-top: -1em; transition: left 0.1s linear, top 0.1s linear; border-radius: 4px; white-space: nowrap; }\n';
 			t += '\t.'+lbl+'-tooltip::after { content: ""; position: absolute; bottom: auto; width: 0; height: 0; border: 0.5em solid transparent; left: 50%; top: 100%; transform: translate3d(-50%,0,0); border-color: transparent; border-top-color: black; }\n';
 			t += '\t</style>\n';
