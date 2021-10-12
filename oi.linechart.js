@@ -1,12 +1,12 @@
 /**
-	ODI Leeds line charts in SVG
-	Version 0.4.4
+	Open Innovations line charts in SVG
+	Version 0.4.5
   */
 (function(root){
-	// Part of the ODI namespace
-	var ODI = root.ODI || {};
-	if(!ODI.ready){
-		ODI.ready = function(fn){
+	// Part of the OI namespace
+	var OI = root.OI || {};
+	if(!OI.ready){
+		OI.ready = function(fn){
 			// Version 1.1
 			if(document.readyState != 'loading') fn();
 			else document.addEventListener('DOMContentLoaded', fn);
@@ -250,6 +250,7 @@
 			line = {};
 			path = "";
 			pts = [];
+			label = "";
 
 			// Build group
 			this.el = svgEl("g");
@@ -350,6 +351,16 @@
 						// Add animations
 						pts[i].c = new Animate(pts[i].el);
 					}
+					if(attr.line.label){
+						label = svgEl("text");
+						label.innerHTML = attr.title;
+						var props = getXY(data[pts.length-1].x,data[pts.length-1].y);
+						props['dominant-baseline'] = "middle";
+						props.fill = (attr.line.color||'black');
+						if(attr.line.label.padding) props.x += attr.line.label.padding;
+						setAttr(label,props);
+						add(label,this.el);
+					}
 				}
 
 				// Update points
@@ -367,6 +378,9 @@
 					// Update point position
 					pts[i].c.set({'cx':{'from':pts[i].old.x||null,'to':ps.x},'cy':{'from':pts[i].old.y||null,'to':ps.y}});
 					pts[i].old = ps;
+				}
+				if(label){
+					
 				}
 
 				// Update animation
@@ -589,6 +603,6 @@
 		this.error = function(msg){ if(el){ console.error(msg); el.innerHTML = '<span class="error">ERROR: '+msg+'</span>'; } return this; };
 		return this;
 	}
-	ODI.linechart = function(el,attr){ return new LineChart(el,attr); };
-	root.ODI = ODI;
+	OI.linechart = function(el,attr){ return new LineChart(el,attr); };
+	root.OI = OI;
 })(window || this);

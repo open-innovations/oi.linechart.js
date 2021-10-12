@@ -4,9 +4,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8" />
 	<link rel="icon" href="resources/favicon.svg" />
-	<title>ODI Leeds Line Chart Library</title>
-	<script src="odi.linechart.js"></script>
-	<script src="resources/odi.formatexamples.js"></script>
+	<title>Open Innovations Line Chart Library</title>
+	<script src="oi.linechart.js"></script>
+	<script src="resources/oi.formatexamples.js"></script>
 	<script src="resources/highlight.pack.js"></script>
 	<link rel="StyleSheet" href="resources/highlight.css" type="text/css" />
 	<style>
@@ -98,17 +98,17 @@
 	</header>
 	<div class="padded">
 		<div class="holder">
-		<p id="intro"><a href="odi.linechart.js">odi.linechart.js</a> (22kB; 14kB minified; 6kB minified and gzipped) is our small, customisable, standalone, Javascript library for making simple SVG graphs. There are some <a href="#ex1">examples below</a>.</p>
+		<p id="intro"><a href="oi.linechart.js">oi.linechart.js</a> (23kB; 15kB minified; 6kB minified and gzipped) is our small, customisable, standalone, Javascript library for making simple SVG graphs. There are some <a href="#ex1">examples below</a>.</p>
 		<style>
 		#chart { height: 400px; width: 100%; margin: 1em auto; position: relative; animation-duration: 0.3s; background: #efefef; padding: 2em; }
 		</style>
 		<div id="chart"></div>
 		<script>
-		ODI.ready(function(){
+		OI.ready(function(){
 			monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 			months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-			chart = ODI.linechart(document.getElementById('chart'),{
+			chart = OI.linechart(document.getElementById('chart'),{
 				'left':50,
 				'right':10,
 				'top':10,
@@ -175,7 +175,7 @@
 			// Set up the chart object
 			// The first argument is the DOM element
 			// The second argument is an object setting optional properties
-			var chart = ODI.linechart(document.getElementById('chart'),properties);
+			var chart = OI.linechart(document.getElementById('chart'),properties);
 		</pre>
 
 		<h2>Chart properties</h2>
@@ -246,8 +246,8 @@
 				</style>
 				<div id="chart1"></div>
 				<script>
-				ODI.ready(function(){
-					var chart1 = ODI.linechart(document.getElementById('chart1'),{
+				OI.ready(function(){
+					var chart1 = OI.linechart(document.getElementById('chart1'),{
 						'left':50,
 						'right':10,
 						'top':10,
@@ -295,11 +295,11 @@
 				</style>
 				<div id="chart2"></div>
 				<script>
-				ODI.ready(function(){
+				OI.ready(function(){
 					monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 					months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-					chart2 = ODI.linechart(document.getElementById('chart2'),{
+					chart2 = OI.linechart(document.getElementById('chart2'),{
 						'left':50,
 						'right':10,
 						'top':10,
@@ -376,8 +376,8 @@
 				<div id="chart3"></div>
 				<button id="random3">Randomise data</button>
 				<script>
-				ODI.ready(function(){
-					chart3 = ODI.linechart(document.getElementById('chart3'),{
+				OI.ready(function(){
+					chart3 = OI.linechart(document.getElementById('chart3'),{
 						'left':60,
 						'right':10,
 						'top':10,
@@ -457,8 +457,8 @@
 				</style>
 				<div id="chart4"></div>
 				<script>
-				ODI.ready(function(){
-					chart4 = ODI.linechart(document.getElementById('chart4'),{
+				OI.ready(function(){
+					chart4 = OI.linechart(document.getElementById('chart4'),{
 						'left':20,
 						'right':50,
 						'top':60,
@@ -524,8 +524,8 @@
 				</style>
 				<div id="chart5"></div>
 				<script>
-				ODI.ready(function(){
-					chart5 = ODI.linechart(document.getElementById('chart5'),{
+				OI.ready(function(){
+					chart5 = OI.linechart(document.getElementById('chart5'),{
 						'left':32,
 						'right':10,
 						'top':10,
@@ -613,12 +613,12 @@
 	</div>
 	<footer>
 		<div class="holder">
-		<p>&copy; 2021 <a href="https://odileeds.org/" target="_parent">ODI Leeds</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_parent">CC BY</a>). Find the <a href="https://github.com/odileeds/odi.linechart.js">code on Github</a>.</p>
+		<p>&copy; 2021 <a href="https://open-innovations.org/" target="_parent">Open Innovations</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_parent">CC BY</a>). Find the <a href="https://github.com/open-innovations/oi.linechart.js">code on Github</a>.</p>
 		</div>
 	</footer>
-	<script src="https://odileeds.org/resources/odi.log.js"></script>
+	<script src="https://odileeds.org/resources/oi.log.js"></script>
 	<script>
-	ODI.log.setup({'id':'odileeds','target':['odileeds.github.io']}).add('action=view');
+	OI.log.setup({'id':'odileeds','target':['open-innovations.github.io','odileeds.github.io']}).add('action=view');
 	</script>
 </body>
 </html>

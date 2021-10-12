@@ -4,8 +4,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8" />
 	<link rel="icon" href="resources/favicon.svg" />
-	<title>ODI Leeds Line Chart Library</title>
-	<script src="odi.linechart.min.js"></script>
+	<title>Open Innovations Line Chart Library</title>
+	<script src="oi.linechart.min.js"></script>
 	<style>
 	/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License: none (public domain) */
 	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
@@ -96,10 +96,10 @@
 		</style>
 		<div id="chart"></div>
 		<script>
-		ODI.ready(function(){
+		OI.ready(function(){
 			monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 			months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-			chart = ODI.linechart(document.getElementById('chart'),{
+			chart = OI.linechart(document.getElementById('chart'),{
 				'left':50,
 				'right':10,
 				'top':10,
@@ -160,7 +160,7 @@
 			chart.draw();
 		});
 		</script>
-		<p>This is a basic example of our <a href="odi.linechart.html">small, standalone, line-chart library</a>.</p>
+		<p>This is a basic example of our small, standalone, line-chart library.</p>
 		</div>
 	</div>
 	<footer>
@@ -168,9 +168,9 @@
 		<p>&copy; 2021 <a href="https://odileeds.org/" target="_parent">ODI Leeds</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_parent">CC BY</a>).</p>
 		</div>
 	</footer>
-	<script src="https://odileeds.org/resources/odi.log.js"></script>
+	<script src="https://open-innovations.org/resources/oi.log.js"></script>
 	<script>
-	ODI.log.setup({'id':'odileeds','target':['odileeds.github.io']}).add('action=view');
+	OI.log.setup({'id':'odileeds','target':['open-innovations.github.io','odileeds.github.io']}).add('action=view');
 	</script>
 </body>
 </html>
