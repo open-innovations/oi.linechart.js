@@ -1,6 +1,6 @@
 /**
 	Open Innovations line charts in SVG
-	Version 0.4.5
+	Version 0.4.7
   */
 (function(root){
 	// Part of the OI namespace
@@ -89,6 +89,9 @@
 				merge(a,props);
 				cb.call(a['this']||this,a);
 			}
+		}
+		function onClick(e,i){
+			if(fo && events.click) events.click.trigger({'i':i});
 		}
 		function showTooltip(e,s,i,d,tt){
 			var txt,tip,c,bb,bbo;
@@ -347,6 +350,11 @@
 							pt.addEventListener('mouseover',function(e){ e.target.focus(); });
 							pt.addEventListener('focus',ptooltip);
 						}
+						pt.addEventListener('click',function(e){
+							var i = parseInt(e.target.getAttribute('data-i'));
+							if(data[i]) onClick(e.target,i);
+							else console.error('Bad click '+i,e);
+						});
 						add(pt,this.el);
 						// Add animations
 						pts[i].c = new Animate(pts[i].el);
@@ -379,9 +387,6 @@
 					pts[i].c.set({'cx':{'from':pts[i].old.x||null,'to':ps.x},'cy':{'from':pts[i].old.y||null,'to':ps.y}});
 					pts[i].old = ps;
 				}
-				if(label){
-					
-				}
 
 				// Update animation
 				line.animate.set({'d':{'from':path,'to':p}});
@@ -389,6 +394,12 @@
 				// Store a copy of the current path
 				path = clone(p);
 				return this;
+			};
+			this.remove = function(){
+				if(line.el.parentNode) line.el.parentNode.removeChild(line.el);
+				for(i = 0; i < pts.length; i++){
+					if(pts[i].el.parentNode) pts[i].el.parentNode.removeChild(pts[i].el);
+				}
 			};
 
 			this.setData(data);
@@ -455,6 +466,12 @@
 			updateRange();
 			this.series = series;
 			return this;
+		};
+		this.clear = function(){
+			for(var s = 0; s < series.length; s++) series[s].remove();
+			series = [];
+			this.series = [];
+			return this.draw();
 		};
 		function updateRange(){
 			xmin = 1e100;
