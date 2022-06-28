@@ -68,7 +68,10 @@
 			showtitle = true;
 			if(examples[i].getAttribute('data-title')=="false") showtitle = false;
 
-			output = (showtitle ? '<h3>How to do it</h3>':'')+(css ? (showtitle ? '<h4>CSS</h4>':'')+'<pre class="prettyprint lang-css">'+(sanitise(css))+'</pre>':'')+(js ? (showtitle ? '<h4>Javascript</h4>':'')+'<pre class="prettyprint lang-js">'+(sanitise(js))+'</pre>':'')+(code && showtitle ? '<h4>HTML</h4>':'')+(code ? '<pre class="prettyprint lang-html">'+(code)+'</pre>':'');
+			output = (showtitle ? '<h3>How to do it</h3>':'')
+			output += (code && showtitle ? '<h4>HTML</h4>':'')+(code ? '<pre class="prettyprint lang-html">'+(code)+'</pre>':'');
+			output += (css ? (showtitle ? '<h4>CSS</h4>':'')+'<pre class="prettyprint lang-css">'+(sanitise(css))+'</pre>':'');
+			output += (js ? (showtitle ? '<h4>Javascript</h4>':'')+'<pre class="prettyprint lang-js">'+(sanitise(js))+'</pre>':'');
 
 			div = document.createElement('div');
 			div.classList.add('howto');

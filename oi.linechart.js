@@ -1,6 +1,9 @@
 /**
 	Open Innovations line charts in SVG
-	Version 0.4.7
+	
+	0.5.0
+		- better animation for lines/points when the number of points changes
+		- alter tick offset/size setting
   */
 (function(root){
 	// Part of the OI namespace
@@ -13,6 +16,9 @@
 		};
 	}
 	function LineChart(el,attr){
+
+		this.version = "0.5.0";
+
 		if(!el){
 			console.error('No element to attach to');
 			return this;
@@ -188,9 +194,11 @@
 				for(t in attr.labels){
 					// Check if this tick exists
 					if(typeof t!=="undefined"){
+						if(typeof attr.labels[t]==="undefined") attr.labels[t] = {'label':''};
 						align = attr.labels[t].align||(ax=="x" ? "bottom" : "left");
 						talign = attr.labels[t]['text-anchor']||(ax=="y" ? (align=="left" ? "end":"start") : "middle");
-						len = (typeof attr.labels[t].length==="number" ? attr.labels[t].length:5);
+						baseline = (ax=="x" ? ((align=="bottom") ? "hanging" : "text-bottom") : "middle");
+						len = (typeof attr.labels[t].ticksize==="number" ? attr.labels[t].ticksize:5);
 						x = (ax=="x" ? parseFloat(t) : (align=="left" ? xmin:xmax));
 						y = (ax=="x" ? (align=="bottom" ? ymin:ymax) : parseFloat(t));
 						a = getXY(x,y);
@@ -233,10 +241,12 @@
 								});
 								setAttr(this.ticks[t].line.el,{'stroke':attr.grid.stroke,'stroke-width':attr.grid['stroke-width']});
 							}
-							this.ticks[t].text.el.innerHTML = attr.labels[t].label;
-							setAttr(this.ticks[t].text.el,{'stroke':attr.labels[t].stroke||"black",'stroke-width':attr.labels[t]['stroke-width']||0,'fill':attr.labels[t].fill||"black"});
-							tx = b.x+(attr.labels[t].dx||0)+(ax=="y" ? (attr.labels[t].align=="right" ? 1:-1)*p : 0);
-							ty = b.y+(attr.labels[t].dy||0)+(ax=="x" ? (attr.labels[t].align=="bottom" ? -1:1)*p : 0);
+							this.ticks[t].text.el.innerHTML = attr.labels[t].label||"";
+							setAttr(this.ticks[t].text.el,{'stroke':attr.labels[t].stroke||"black",'stroke-width':attr.labels[t]['stroke-width']||0,'fill':attr.labels[t].fill||"black",'dominant-baseline':baseline});
+							xsign = (attr.labels[t].align=="right" ? 1:-1);
+							ysign = (attr.labels[t].align=="top" ? -1:1);
+							tx = b.x + (ax=="y" ? xsign*(typeof attr.labels[t].offset==="number" ? attr.labels[t].offset : p) : 0);
+							ty = b.y + (ax=="x" ? ysign*(typeof attr.labels[t].offset==="number" ? attr.labels[t].offset : p) : 0);
 							this.ticks[t].text.animate.set({'x':{'to':tx},'y':{'to':ty}});
 						}
 					}
@@ -373,6 +383,7 @@
 
 				// Update points
 				p = [];
+				var old = {};
 				for(i = 0; i < pts.length; i++){
 					r = (attr['stroke-width']||1)/2;
 					if(attr.points){
@@ -382,7 +393,11 @@
 					setAttr(pts[i].el,{'r':r,'fill':attr.points.color,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
 					ps = getXY(data[i].x,data[i].y);
 					p.push(ps);
-
+					// Keep a copy 
+					if(typeof pts[i].old.x==="number" && typeof pts[i].old.y==="number") old = clone(pts[i].old);
+					else{
+						if(typeof old.x==="number" && typeof old.y==="number") pts[i].old = old;
+					}
 					// Update point position
 					pts[i].c.set({'cx':{'from':pts[i].old.x||null,'to':ps.x},'cy':{'from':pts[i].old.y||null,'to':ps.y}});
 					pts[i].old = ps;
@@ -434,6 +449,12 @@
 							b2 = "";
 							for(i = 0; i < a.length; i++) a2 += (i>0 ? 'L':'M')+a[i].x.toFixed(2)+','+a[i].y.toFixed(2);
 							for(i = 0; i < b.length; i++) b2 += (i>0 ? 'L':'M')+b[i].x.toFixed(2)+','+b[i].y.toFixed(2);
+							if(a.length > 0 && a.length < b.length){
+								for(i = 0; i < b.length-a.length; i++) a2 += 'L'+a[a.length-1].x.toFixed(2)+','+a[a.length-1].y.toFixed(2);
+							}
+							if(b.length > 0 && b.length < a.length){
+								for(i = 0; i < a.length-b.length; i++) b2 += 'L'+b[b.length-1].x.toFixed(2)+','+b[b.length-1].y.toFixed(2);
+							}
 							if(!a2) a2 = null;
 						}else{
 							if(a) a2 = clone(a);
@@ -573,7 +594,6 @@
 				}
 			}
 			t += '\t.'+lbl+'-grid.'+lbl+'-grid-x .'+lbl+'-grid-title,.'+lbl+'-grid.'+lbl+'-grid-y .'+lbl+'-grid-title { text-anchor: middle; dominant-baseline: central; }\n';
-			t += '\t.'+lbl+'-grid.'+lbl+'-grid-x text { dominant-baseline: hanging; }\n';
 			t += '\t.'+lbl+'-grid.'+lbl+'-grid-y text { dominant-baseline: '+((opt.axis.y.labels ? opt.axis.y.labels.baseline : '')||"middle")+'; }\n';
 			t += '\t.'+lbl+'-tooltip { background: black; color: white; padding: 0.25em 0.5em; margin-top: -1em; transition: left 0.1s linear, top 0.1s linear; border-radius: 4px; white-space: nowrap; }\n';
 			t += '\t.'+lbl+'-tooltip::after { content: ""; position: absolute; bottom: auto; width: 0; height: 0; border: 0.5em solid transparent; left: 50%; top: 100%; transform: translate3d(-50%,0,0); border-color: transparent; border-top-color: black; }\n';
