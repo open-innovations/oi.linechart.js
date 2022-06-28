@@ -112,7 +112,7 @@
 				// The second argument is an object setting optional properties - <a href="#chart-properties">see below</a>
 				var chart = OI.linechart(document.getElementById('chart'),properties);
 				// Next we add a data series - <a href="#add-series">see "Add a series"</a> below
-				chart.addSeries(data,attr)
+				chart.addSeries([{'x':1,'y':1},{'x':1,'y':2}],{})
 				// Draw the chart
 				chart.draw();
 			</pre>
