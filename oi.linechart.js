@@ -1,5 +1,5 @@
 /**
-	Open Innovations line charts in SVG
+	Open Innovations line charts in SVG - https://github.com/open-innovations/oi.linechart.js
 	
 	0.5.0
 		- better animation for lines/points when the number of points changes
