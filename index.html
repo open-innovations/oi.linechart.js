@@ -23,733 +23,810 @@
 	</header>
 	<div class="padded">
 		<div class="holder">
-		<p id="intro"><a href="oi.linechart.js">oi.linechart.js</a> (24.5kB; 16.2kB minified; 7kB minified and gzipped) is our small, customisable, standalone, Javascript library for making simple SVG graphs. There are some <a href="#examples">examples below</a>.</p>
-		<style>
-		#chart { height: 400px; width: 100%; margin: 1em auto; position: relative; animation-duration: 0.3s; background: #efefef; padding: 2em; }
-		</style>
-		<div id="chart"></div>
-		<script>
-		OI.ready(function(){
-			monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-			months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			<p id="intro"><a href="oi.linechart.js">oi.linechart.js</a> (25.2kB; 16.6kB minified; 7kB minified and gzipped) is our small, customisable, standalone, Javascript library for making simple SVG graphs. There are some <a href="#examples">examples below</a>.</p>
+			<style>
+			svg { border: 0px solid rgba(34, 84, 244, 0.5); }
+			#chart { height: 400px; width: 100%; margin: 1em auto; position: relative; animation-duration: 0.3s; background: #efefef; padding: 2em; }
+			</style>
+			<div id="chart"></div>
+			<script>
+			OI.ready(function(){
+				monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+				months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-			chart = OI.linechart(document.getElementById('chart'),{
-				'left':50,
-				'right':10,
-				'top':10,
-				'bottom':24,
-				// Draw a key
-				'key':{ 'show':true },
-				// Define the axes
-				'axis':{
-					'x':{
-						'line': {'show':true},
-						'labels':{
-							1: {'label':months[0]},
-							2: {'label':months[1]},
-							3: {'label':months[2]},
-							4: {'label':months[3]},
-							5: {'label':months[4]},
-							6: {'label':months[5]},
-							7: {'label':months[6]},
-							8: {'label':months[7]},
-							9: {'label':months[8]},
-							10: {'label':months[9]},
-							11: {'label':months[10]},
-							12: {'label':months[11]}
-						}
-					},
-					'y':{
-						'line': {'show':false,'stroke-width':2},
-						'grid': {'show':true},
-						'title': { 'label': 'Temperature &deg;C' },
-						'labels':{
-							0: {'label':0},
-							5: {'label':5},
-							10: {'label':10},
-							15: {'label':15},
-							20: {'label':20}
-						}
-					}
-				}
-			});
-			// A function to create the contents of a tooltip
-			function label(d){ return ''+d.series.title+'\n'+monthslong[d.i]+': '+d.data.y.toFixed(2)+'&deg;C'; }
-			// Create some data
-			var maxtemp = [{x:1,y:6.4},{x:2,y:7},{x:3,y:9.1},{x:4,y:11.9},{x:5,y:14.8},{x:6,y:17.5},{x:7,y:19.6},{x:8,y:19},{x:9,y:16.9},{x:10,y:13.3},{x:11,y:9.1},{x:12,y:6.7}];
-			var mintemp = [{x:1,y:1.8},{x:2,y:1.4},{x:3,y:2.2},{x:4,y:3.9},{x:5,y:7},{x:6,y:9.9},{x:7,y:12.1},{x:8,y:12},{x:9,y:10.1},{x:10,y:7.6},{x:11,y:4.3},{x:12,y:2.2}];
-			// Add the data to the chart
-			chart.addSeries(maxtemp,{
-				'title': 'Max temperature',
-				'points':{ 'size':4, 'color': '#FF6700' },
-				'line':{ 'color': '#FF6700' },
-				'tooltip':{ 'label': label }
-			});
-			chart.addSeries(mintemp,{
-				'title': 'Min temperature',
-				'points':{ 'size':4, 'color': '#2254F4' },
-				'line':{ 'color': '#2254F4' },
-				'tooltip':{ 'label': label }
-			});
-			chart.draw();
-		});
-		</script>
-		
-
-		<h2>Getting started</h2>
-		<p>First we need a DOM element to exist and it needs to have a width/height set. We can then attach our <code>OI.linechart</code> to the DOM element and set some properties of our chart. Next we can add a data series with some custom properties.</p>
-
-		<h4>HTML</h4>
-		<pre class="prettyprint lang-js hljs html">
-			&lt;div id="chart"&gt;&lt;/div&gt;
-		</pre>
-
-		<h4>Javascript</h4>
-		<pre class="prettyprint lang-js hljs javascript">
-			// Set up the chart object
-			// The first argument is the DOM element to attach to (you may want to make sure it exists before you attach it)
-			// The second argument is an object setting optional properties - <a href="#chart-properties">see below</a>
-			var chart = OI.linechart(document.getElementById('chart'),properties);
-			// Next we add a data series - <a href="#add-series">see "Add a series"</a> below
-			chart.addSeries(data,attr)
-			// Draw the chart
-			chart.draw();
-		</pre>
-
-		<h3 id="chart-properties">Chart properties</h3>
-		<p>When creating a new line chart you can set chart properties:</p>
-		<ul>
-			<li><code>left</code> - the edge of the chart from the left-side of the chart area</li>
-			<li><code>right</code> - the edge of the chart from the right-side of the chart area</li>
-			<li><code>top</code> - the edge of the chart from the top-side of the chart area</li>
-			<li><code>bottom</code> - the edge of the chart from the bottom-side of the chart area</li>
-			<li><code>axis</code> - properties about the axes</li>
-			<li><code>axis.x</code> - properties for the x-axis (<a href="#axis-properties">see "Axis properties" below</a>)</li>
-			<li><code>axis.y</code> - properties for the y-axis (<a href="#axis-properties">see "Axis properties" below</a>)</li>
-			<li><code>key</code> - an object defining a key</li>
-			<li><code>key.show</code> - is a key visible (default = <code>false</code>)</li>
-		</ul>
-		<p>You can also update the properties of the chart later using <code>chart.setProperties(props)</code>.</p>
-		<h3 id="axis-properties">Axis properties</h3>
-		<p>You can update each <code>axis</code> with the following options:</p>
-		<ul>
-			<li><code>label</code> - a title for the axis</li>
-			<li><code>line</code> - an object defining the axis line</li>
-			<li><code>line.show</code> - a boolean value to set the visibility of the line (default = <code>true</code>)</li>
-			<li><code>line.stroke</code> - the stroke (default = <code>black</code>)</li>
-			<li><code>line.stroke-width</code> - the stroke width (default = <code>1</code>)</li>
-			<li><code>min</code> - hardcode a minimum for the chart</li>
-			<li><code>max</code> - hardcode a maximum for the chart</li>
-			<li><code>grid</code> - an object defining the grid</li>
-			<li><code>grid.show</code> - a boolean value to set the visibility of the grid lines (default = <code>false</code>)</li>
-			<li><code>grid.stroke</code> - the stroke (default = <code>black</code>)</li>
-			<li><code>grid.stroke-width</code> - the stroke width (default = <code>1</code>)</li>
-			<li><code>labels</code> - an object of hard-coded tick marks/labels</li>
-			<li><code>labels[value]</code> - an object describing the label for <code>value</code></li>
-			<li><code>labels[value].label</code> - a string for the label (if omitted there will be no label but still a tick mark)</li>
-			<li><code>labels[value].fill</code> - a hex/rgb colour for the label fill</li>
-			<li><code>labels[value].length</code> - the length of the tick</li>
-			<li><code>labels[value].align</code> - <code>top</code> or <code>bottom</code> (default) for the x-axis or <code>left</code> (default) or <code>right</code> for the y-axis tick marks</li>
-			<li><code>labels[value].text-anchor</code> - set the <code>text-anchor</code> for the label</li>
-			<li><code>labels[value].offset</code> - shift the label position away from the tick</li>
-			<li><code>labels[value].ticksize</code> - the size of the tick mark in pixels</li>
-		</ul>
-		<h3 id="add-series">Add a series</h3>
-		<p>You can add a series using <code>chart.addSeries(data,attr)</code> where <code>data</code> is of the form <code>[{x:1,y:0.1},{x:2,y:0.2},{x:3,y:0.3}]</code> and <code>attr</code> is of the form:</p>
-		<ul>
-			<li><code>points</code> - an object styling the points</li>
-			<li><code>points.show</code> - a boolean to set the point visibility (default = true)</li>
-			<li><code>points.color</code> - the hex/rgb colour of the points</li>
-			<li><code>points.size</code> - either a number of function for setting the size of the points</li>
-			<li><code>points.stroke-width</code> - set the width of the stroke</li>
-			<li><code>line</code> - an object styling the line</li>
-			<li><code>line.show</code> - a boolean to set the line visibility (default = true)</li>
-			<li><code>line.color</code> - the hex/rgb colour of the  line</li>
-			<li><code>line.stroke-width</code> - set the width of the stroke</li>
-			<li><code>line.stroke-dasharray</code> - set the <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray">stroke's dash array</a></li>
-			<li><code>tooltip</code> - an object styling the tooltip</li>
-			<li><code>tooltip.label</code> - either a fixed string or a function that generates the tooltip text using properties of the data.</li>
-		</ul>
-
-
-		<h2 id="examples">Examples</h2>
-		<ol>
-			<li><a href="#basic">Basic example</a></li>
-			<li><a href="#grid-lines">Grid lines</a></li>
-			<li><a href="#multiple-series">Multiple series</a></li>
-			<li><a href="#update-series">Update series</a></li>
-			<li><a href="#dashed-line">Dashed line</a></li>
-			<li><a href="#label-alignment">Label alignment</a></li>
-			<li><a href="#style-tooltip">Style tooltip (darker charts)</a></li>
-			<li><a href="#tick-marks">Tick marks</a></li>
-		</ol>
-		<script>
-		// Make a Gaussian function
-		var gaussian = [];
-		for(x = -4; x <= 4; x += 0.1) gaussian.push({x:x,y:Math.exp(-x*x/4)});
-		</script>
-
-		<section class="example" id="basic">
-			<h2>Basic example</h2>
-			<p>This is a basic chart with one series.</p>
-			<div class="example-code">
-				<style>
-				#chart_basic { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_basic"></div>
-				<script>
-				OI.ready(function(){
-					var chart_basic = OI.linechart(document.getElementById('chart_basic'),{
-						'left':50,
-						'right':10,
-						'top':10,
-						'bottom':50,
-						'axis':{
-							'x':{
-								'title': { 'label': 'x value' },
-								'labels':{
-									"-3": {'label':-3},
-									"-2": {'label':-2},
-									"-1": {'label':-1},
-									"0": {'label':0},
-									"1": {'label':1},
-									"2": {'label':2},
-									"3": {'label':3}
-								}
-							},
-							'y':{
-								'title':{ 'label':'y value' },
-								'labels':{
-									"0": {'label':0},
-									"0.5": {'label':0.5},
-									"1": {'label':1}
-								}
+				chart = OI.linechart(document.getElementById('chart'),{
+					'left':66,
+					'right':8,
+					'top':8,
+					'bottom':40,
+					// Draw a key
+					'key':{ 'show':true },
+					// Define the axes
+					'axis':{
+						'x':{
+							'line': {'show':true},
+							'labels':{
+								1: {'label':months[0]},
+								2: {'label':months[1]},
+								3: {'label':months[2]},
+								4: {'label':months[3]},
+								5: {'label':months[4]},
+								6: {'label':months[5]},
+								7: {'label':months[6]},
+								8: {'label':months[7]},
+								9: {'label':months[8]},
+								10: {'label':months[9]},
+								11: {'label':months[10]},
+								12: {'label':months[11]}
+							}
+						},
+						'y':{
+							'line': {'show':false,'stroke-width':2},
+							'grid': {'show':true},
+							'title': { 'label': 'Temperature &deg;C' },
+							'labels':{
+								0: {'label':0},
+								5: {'label':5},
+								10: {'label':10},
+								15: {'label':15},
+								20: {'label':20}
 							}
 						}
-					});
-					// gaussian is an array of the form [{'x':0.2,'y':0.5}]
-					chart_basic.addSeries(gaussian,{'points':{'color':'#2254F4'},'line':{'color':'#2254F4'}});
-					chart_basic.draw();
+					}
 				});
-				</script>
-			</div>
-		</section>
+				// A function to create the contents of a tooltip
+				function label(d){ return ''+d.series.title+'\n'+monthslong[d.i]+': '+d.data.y.toFixed(2)+'&deg;C'; }
+				// Create some data
+				var maxtemp = [{x:1,y:6.4},{x:2,y:7},{x:3,y:9.1},{x:4,y:11.9},{x:5,y:14.8},{x:6,y:17.5},{x:7,y:19.6},{x:8,y:19},{x:9,y:16.9},{x:10,y:13.3},{x:11,y:9.1},{x:12,y:6.7}];
+				var mintemp = [{x:1,y:1.8},{x:2,y:1.4},{x:3,y:2.2},{x:4,y:3.9},{x:5,y:7},{x:6,y:9.9},{x:7,y:12.1},{x:8,y:12},{x:9,y:10.1},{x:10,y:7.6},{x:11,y:4.3},{x:12,y:2.2}];
+				// Add the data to the chart
+				chart.addSeries(maxtemp,{
+					'title': 'Max temperature',
+					'points':{ 'size':4, 'color': '#FF6700' },
+					'line':{ 'color': '#FF6700' },
+					'tooltip':{ 'label': label }
+				});
+				chart.addSeries(mintemp,{
+					'title': 'Min temperature',
+					'points':{ 'size':4, 'color': '#2254F4' },
+					'line':{ 'color': '#2254F4' },
+					'tooltip':{ 'label': label }
+				});
+				chart.draw();
+			});
+			</script>
+			
 
-		<section class="example" id="grid-lines">
-			<h2>Grid lines</h2>
-			<p>This is a basic chart with one series and grid lines of different colours.</p>
-			<div class="example-code">
-				<style>
-				#chart_gridlines { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_gridlines"></div>
-				<script>
-				OI.ready(function(){
-					var chart_gridlines = OI.linechart(document.getElementById('chart_gridlines'),{
-						'left':50,
-						'right':10,
-						'top':10,
-						'bottom':50,
-						'axis':{
-							'x':{
-								'grid': {
-									'show':true,
-									'stroke': 'rgba(13, 188, 55,0.5)'
+			<h2>Getting started</h2>
+			<p>First we need a DOM element to exist and it needs to have a width/height set. We can then attach our <code>OI.linechart</code> to the DOM element and set some properties of our chart. Next we can add a data series with some custom properties.</p>
+
+			<h4>HTML</h4>
+			<pre class="prettyprint lang-js hljs html">
+				&lt;div id="chart"&gt;&lt;/div&gt;
+			</pre>
+
+			<h4>Javascript</h4>
+			<pre class="prettyprint lang-js hljs javascript">
+				// Set up the chart object
+				// The first argument is the DOM element to attach to (you may want to make sure it exists before you attach it)
+				// The second argument is an object setting optional properties - <a href="#chart-properties">see below</a>
+				var chart = OI.linechart(document.getElementById('chart'),properties);
+				// Next we add a data series - <a href="#add-series">see "Add a series"</a> below
+				chart.addSeries(data,attr)
+				// Draw the chart
+				chart.draw();
+			</pre>
+
+			<h3 id="chart-properties">Chart properties</h3>
+			<p>When creating a new line chart you can set chart properties:</p>
+			<ul>
+				<li><code>left</code> - the edge of the chart from the left-side of the chart area</li>
+				<li><code>right</code> - the edge of the chart from the right-side of the chart area</li>
+				<li><code>top</code> - the edge of the chart from the top-side of the chart area</li>
+				<li><code>bottom</code> - the edge of the chart from the bottom-side of the chart area</li>
+				<li><code>axis</code> - properties about the axes</li>
+				<li><code>axis.x</code> - properties for the x-axis (<a href="#axis-properties">see "Axis properties" below</a>)</li>
+				<li><code>axis.y</code> - properties for the y-axis (<a href="#axis-properties">see "Axis properties" below</a>)</li>
+				<li><code>key</code> - an object defining a key</li>
+				<li><code>key.show</code> - is a key visible (default = <code>false</code>)</li>
+				<li><code>key.position</code> - a string defining e.g. <code>top left</code>, <code>bottom right</code></li>
+			</ul>
+			<p>You can also update the properties of the chart later using <code>chart.setProperties(props)</code>.</p>
+			<h3 id="axis-properties">Axis properties</h3>
+			<p>You can update each <code>axis</code> with the following options:</p>
+			<ul>
+				<li><code>label</code> - a title for the axis</li>
+				<li><code>line</code> - an object defining the axis line</li>
+				<li><code>line.show</code> - a boolean value to set the visibility of the line (default = <code>true</code>)</li>
+				<li><code>line.stroke</code> - the stroke (default = <code>black</code>)</li>
+				<li><code>line.stroke-width</code> - the stroke width (default = <code>1</code>)</li>
+				<li><code>min</code> - hardcode a minimum for the chart</li>
+				<li><code>max</code> - hardcode a maximum for the chart</li>
+				<li><code>grid</code> - an object defining the grid</li>
+				<li><code>grid.show</code> - a boolean value to set the visibility of the grid lines (default = <code>false</code>)</li>
+				<li><code>grid.stroke</code> - the stroke (default = <code>black</code>)</li>
+				<li><code>grid.stroke-width</code> - the stroke width (default = <code>1</code>)</li>
+				<li><code>labels</code> - an object of hard-coded tick marks/labels</li>
+				<li><code>labels[value]</code> - an object describing the label for <code>value</code></li>
+				<li><code>labels[value].label</code> - a string for the label (if omitted there will be no label but still a tick mark)</li>
+				<li><code>labels[value].fill</code> - a hex/rgb colour for the label fill</li>
+				<li><code>labels[value].length</code> - the length of the tick</li>
+				<li><code>labels[value].align</code> - <code>top</code> or <code>bottom</code> (default) for the x-axis or <code>left</code> (default) or <code>right</code> for the y-axis tick marks</li>
+				<li><code>labels[value].text-anchor</code> - set the <code>text-anchor</code> for the label</li>
+				<li><code>labels[value].offset</code> - shift the label position away from the tick</li>
+				<li><code>labels[value].ticksize</code> - the size of the tick mark in pixels</li>
+			</ul>
+			<h3 id="add-series">Add a series</h3>
+			<p>You can add a series using <code>chart.addSeries(data,attr)</code> where <code>data</code> is of the form <code>[{x:1,y:0.1},{x:2,y:0.2},{x:3,y:0.3}]</code> and <code>attr</code> is of the form:</p>
+			<ul>
+				<li><code>points</code> - an object styling the points</li>
+				<li><code>points.show</code> - a boolean to set the point visibility (default = true)</li>
+				<li><code>points.color</code> - the hex/rgb colour of the points</li>
+				<li><code>points.size</code> - either a number of function for setting the size of the points</li>
+				<li><code>points.stroke-width</code> - set the width of the stroke</li>
+				<li><code>line</code> - an object styling the line</li>
+				<li><code>line.show</code> - a boolean to set the line visibility (default = true)</li>
+				<li><code>line.color</code> - the hex/rgb colour of the  line</li>
+				<li><code>line.stroke-width</code> - set the width of the stroke</li>
+				<li><code>line.stroke-dasharray</code> - set the <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray">stroke's dash array</a></li>
+				<li><code>tooltip</code> - an object styling the tooltip</li>
+				<li><code>tooltip.label</code> - either a fixed string or a function that generates the tooltip text using properties of the data.</li>
+			</ul>
+
+
+			<h2 id="examples">Examples</h2>
+			<ol>
+				<li><a href="#basic">Basic example</a></li>
+				<li><a href="#grid-lines">Grid lines</a></li>
+				<li><a href="#multiple-series">Multiple series with a key</a></li>
+				<li><a href="#update-series">Update series</a></li>
+				<li><a href="#dashed-line">Dashed line</a></li>
+				<li><a href="#label-alignment">Label alignment</a></li>
+				<li><a href="#style-tooltip">Style tooltip (darker charts)</a></li>
+				<li><a href="#tick-marks">Tick marks</a></li>
+				<li><a href="#update-range">Update range</a></li>
+			</ol>
+			<script>
+			// Make a Gaussian function
+			var gaussian = [];
+			for(x = -4; x <= 4; x += 0.1) gaussian.push({x:x,y:Math.exp(-x*x/4)});
+			</script>
+
+			<section class="example" id="basic">
+				<h2>Basic example</h2>
+				<p>This is a basic chart with one series.</p>
+				<div class="example-code">
+					<style>
+					#chart_basic { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_basic"></div>
+					<script>
+					OI.ready(function(){
+						var chart_basic = OI.linechart(document.getElementById('chart_basic'),{
+							'left':50,
+							'right':0,
+							'top':8,
+							'bottom':50,
+							'axis':{
+								'x':{
+									'title': { 'label': 'x value' },
+									'labels':{
+										"-3": {'label':-3},
+										"-2": {'label':-2},
+										"-1": {'label':-1},
+										"0": {'label':0},
+										"1": {'label':1},
+										"2": {'label':2},
+										"3": {'label':3}
+									}
 								},
-								'title': { 'label': 'x value' },
-								'labels':{
-									"-3": {'label':-3},
-									"-2": {'label':-2},
-									"-1": {'label':-1},
-									"0": {'label':0},
-									"1": {'label':1},
-									"2": {'label':2},
-									"3": {'label':3}
-								}
-							},
-							'y':{
-								'grid': {'show':true, 'stroke': 'rgba(34, 84, 244, 0.5)'},
-								'title':{ 'label':'y value' },
-								'labels':{
-									"0": {'label':0},
-									"0.5": {'label':0.5},
-									"1": {'label':1}
+								'y':{
+									'title':{ 'label':'y value' },
+									'labels':{
+										"0": {'label':0},
+										"0.5": {'label':0.5},
+										"1": {'label':1}
+									}
 								}
 							}
-						}
+						});
+						// gaussian is an array of the form [{'x':0.2,'y':0.5}]
+						chart_basic.addSeries(gaussian,{'points':{'color':'#2254F4'},'line':{'color':'#2254F4'}});
+						chart_basic.draw();
 					});
-					// gaussian is an array of the form [{'x':0.2,'y':0.5}]
-					chart_gridlines.addSeries(gaussian,{'points':{'color':'#2254F4'},'line':{'color':'#2254F4'}});
-					chart_gridlines.draw();
-				});
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
-
-		<section class="example" id="multiple-series">
-			<h2>Multiple series</h2>
-			<p>This example has two data series representing the monthly minimum and maximum temperatures in Leeds, UK. The points have a tooltip that shows the value. We show a key, gridlines on the y-axis, and remove the y-axis line.</p>
-			<div class="example-code">
-				<style>
-				#chart_multiple { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_multiple"></div>
-				<script>
-				OI.ready(function(){
-					monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-					months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-					chart_multiple = OI.linechart(document.getElementById('chart_multiple'),{
-						'left':50,
-						'right':10,
-						'top':10,
-						'bottom':50,
-						// Draw a key
-						'key':{ 'show':true },
-						// Define the axes
-						'axis':{
-							'x':{
-								'title': { 'label':'Month' },
-								'labels':{
-									1: {'label':months[0]},
-									2: {'label':months[1]},
-									3: {'label':months[2]},
-									4: {'label':months[3]},
-									5: {'label':months[4]},
-									6: {'label':months[5]},
-									7: {'label':months[6]},
-									8: {'label':months[7]},
-									9: {'label':months[8]},
-									10: {'label':months[9]},
-									11: {'label':months[10]},
-									12: {'label':months[11]}
-								}
-							},
-							'y':{
-								'line': {'show':false},
-								'grid': {'show':true},
-								'title': { 'label': 'Temperature &deg;C' },
-								'labels':{
-									0: {'label':0},
-									5: {'label':5},
-									10: {'label':10},
-									15: {'label':15},
-									20: {'label':20}
+			<section class="example" id="grid-lines">
+				<h2>Grid lines</h2>
+				<p>This is a basic chart with one series and grid lines of different colours.</p>
+				<div class="example-code">
+					<style>
+					#chart_gridlines { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_gridlines"></div>
+					<script>
+					OI.ready(function(){
+						var chart_gridlines = OI.linechart(document.getElementById('chart_gridlines'),{
+							'left':54,
+							'right':8,
+							'top':8,
+							'bottom':50,
+							'axis':{
+								'x':{
+									'grid': {
+										'show':true,
+										'stroke': 'rgba(13, 188, 55,0.5)'
+									},
+									'title': { 'label': 'x value' },
+									'labels':{
+										"-3": {'label':-3},
+										"-2": {'label':-2},
+										"-1": {'label':-1},
+										"0": {'label':0},
+										"1": {'label':1},
+										"2": {'label':2},
+										"3": {'label':3}
+									}
+								},
+								'y':{
+									'grid': {'show':true, 'stroke': 'rgba(34, 84, 244, 0.5)'},
+									'title':{ 'label':'y value' },
+									'labels':{
+										"0": {'label':0},
+										"0.5": {'label':0.5},
+										"1": {'label':1}
+									}
 								}
 							}
-						}
+						});
+						// gaussian is an array of the form [{'x':0.2,'y':0.5}]
+						chart_gridlines.addSeries(gaussian,{'points':{'color':'#2254F4'},'line':{'color':'#2254F4'}});
+						chart_gridlines.draw();
 					});
-					// A function to create the contents of a tooltip
-					function label(d){
-						return ''+d.series.title+'\n'+monthslong[d.i]+': '+d.data.y.toFixed(2)+'&deg;C';
-					}
-					// Create some data
-					var maxtemp = [{x:1,y:6.4},{x:2,y:7},{x:3,y:9.1},{x:4,y:11.9},{x:5,y:14.8},{x:6,y:17.5},{x:7,y:19.6},{x:8,y:19},{x:9,y:16.9},{x:10,y:13.3},{x:11,y:9.1},{x:12,y:6.7}];
-					var mintemp = [{x:1,y:1.8},{x:2,y:1.4},{x:3,y:2.2},{x:4,y:3.9},{x:5,y:7},{x:6,y:9.9},{x:7,y:12.1},{x:8,y:12},{x:9,y:10.1},{x:10,y:7.6},{x:11,y:4.3},{x:12,y:2.2}];
-					// Add the data to the chart
-					chart_multiple.addSeries(maxtemp,{
-						'title': 'Max temperature',
-						'points':{ 'size':4, 'color': '#FF6700' },
-						'line':{ 'color': '#FF6700' },
-						'tooltip':{ 'label': label }
-					});
-					chart_multiple.addSeries(mintemp,{
-						'title': 'Min temperature',
-						'points':{ 'size':4, 'color': '#2254F4' },
-						'line':{ 'color': '#2254F4' },
-						'tooltip':{ 'label': label }
-					});
-					chart_multiple.draw();
-				});
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
 
-		<section class="example" id="update-series">
-			<h2>Update series</h2>
-			<p>This chart displays randomly generated data and we define the scale on the y-axis using <code>min</code> and <code>max</code>. We can update the data with an animation by setting <code>animation-duration</code> on the chart with CSS. The randomised data also includes a randomised time interval to show how the line and points are animated. We'll make the y-axis gridlines silver.</p>
-			<div class="example-code">
-				<style>
-				#chart_update { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_update"></div>
-				<button id="random3">Randomise data</button>
-				<script>
-				OI.ready(function(){
-					chart_update = OI.linechart(document.getElementById('chart_update'),{
-						'left':60,
-						'right':10,
-						'top':10,
-						'bottom':50,
-						'axis':{
-							'x':{
-								'line': {'stroke-width':2},
-								'title': { 'label': 'Hour' },
-								'labels':{
-									0: {'label':0},
-									4: {'label':"4am"},
-									8: {'label':"8am"},
-									12: {'label':"Noon"},
-									16: {'label':"4pm"},
-									20: {'label':"8pm"}
-								}
-							},
-							'y':{
-								'line': {'stroke-width': 2},
-								'grid': {'show':true,'stroke':'silver'},
-								'min': 0,
-								'max': 100,
-								'title':{ 'label':'Value' },
-								'labels':{
-									0: {'label':0},
-									25: {'label':25},
-									50: {'label':50},
-									75: {'label':75},
-									100: {'label':100}
+			<section class="example" id="multiple-series">
+				<h2>Multiple series with a key</h2>
+				<p>This example has two data series representing the monthly minimum and maximum temperatures in Leeds, UK. The points have a tooltip that shows the value. We show a key, gridlines on the y-axis, and remove the y-axis line.</p>
+				<div class="example-code">
+					<style>
+					#chart_multiple { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_multiple"></div>
+					<script>
+					OI.ready(function(){
+						monthslong = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+						months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+						chart_multiple = OI.linechart(document.getElementById('chart_multiple'),{
+							'left':50,
+							'right':8,
+							'top':8,
+							'bottom':50,
+							// Draw a key positioned to the top left of the plot area
+							'key':{ 'show':true, 'position': 'top left' },
+							// Define the axes
+							'axis':{
+								'x':{
+									'title': { 'label':'Month' },
+									'labels':{
+										1: {'label':months[0]},
+										2: {'label':months[1]},
+										3: {'label':months[2]},
+										4: {'label':months[3]},
+										5: {'label':months[4]},
+										6: {'label':months[5]},
+										7: {'label':months[6]},
+										8: {'label':months[7]},
+										9: {'label':months[8]},
+										10: {'label':months[9]},
+										11: {'label':months[10]},
+										12: {'label':months[11]}
+									}
+								},
+								'y':{
+									'line': {'show':false},
+									'grid': {'show':true},
+									'title': { 'label': 'Temperature &deg;C' },
+									'labels':{
+										0: {'label':0},
+										5: {'label':5},
+										10: {'label':10},
+										15: {'label':15},
+										20: {'label':20}
+									}
 								}
 							}
+						});
+						// A function to create the contents of a tooltip
+						function label(d){
+							return ''+d.series.title+'\n'+monthslong[d.i]+': '+d.data.y.toFixed(2)+'&deg;C';
 						}
+						// Create some data
+						var maxtemp = [{x:1,y:6.4},{x:2,y:7},{x:3,y:9.1},{x:4,y:11.9},{x:5,y:14.8},{x:6,y:17.5},{x:7,y:19.6},{x:8,y:19},{x:9,y:16.9},{x:10,y:13.3},{x:11,y:9.1},{x:12,y:6.7}];
+						var mintemp = [{x:1,y:1.8},{x:2,y:1.4},{x:3,y:2.2},{x:4,y:3.9},{x:5,y:7},{x:6,y:9.9},{x:7,y:12.1},{x:8,y:12},{x:9,y:10.1},{x:10,y:7.6},{x:11,y:4.3},{x:12,y:2.2}];
+						// Add the data to the chart
+						chart_multiple.addSeries(maxtemp,{
+							'title': 'Max temperature',
+							'points':{ 'size':4, 'color': '#FF6700' },
+							'line':{ 'color': '#FF6700' },
+							'tooltip':{ 'label': label },
+							'attr':{ 'data-unit': '&deg;C'}
+						});
+						chart_multiple.addSeries(mintemp,{
+							'title': 'Min temperature',
+							'points':{ 'size':4, 'color': '#2254F4' },
+							'line':{ 'color': '#2254F4' },
+							'tooltip':{ 'label': label },
+							'attr':{ 'data-unit': '&deg;C'}
+						});
+						chart_multiple.draw();
 					});
-					chart_update.addSeries(makeHourlyData(),{
-						'title': 'Views',
-						'points':{ 'size': 3, 'color': '#FF6700' },
-						'line': { 'show': true, 'color': '#FF6700', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								var t,hh,mm;
-								hh = Math.floor(d.data.x%12);
-								mm = Math.round(60*(d.data.x%12 - Math.floor(d.data.x%12)))+"";
-								if(mm.length==1) mm = '0'+mm;
-								if(hh.length==1) hh = '0'+hh;
-								if(d.data.x == 12) t = "Noon";
-								else if(d.data.x == 24) t = "Midnight";
-								else if(d.data.x < 12) t = hh+':'+mm+"am";
-								else if(d.data.x > 12 && d.data.x < 24) t = hh+':'+mm+"pm";
-								return ''+d.series.title+'\n'+t+': '+d.data.y;
-							}
-						}
-					});
-					chart_update.draw();
+					</script>
+				</div>
+			</section>
 
-					document.getElementById('random3').addEventListener('click',function(e){
-						e.preventDefault();
-						r = Math.floor(Math.random()*10)
-						if(r < 4) chart_update.series[0].setData(makeHourlyData(1,24));
-						else if(r > 7) chart_update.series[0].setData(makeHourlyData(0.5,48));
-						else chart_update.series[0].setData(makeHourlyData(0.25,96));
+
+			<section class="example" id="update-series">
+				<h2>Update series</h2>
+				<p>This chart displays randomly generated data and we define the scale on the y-axis using <code>min</code> and <code>max</code>. We can update the data with an animation by setting <code>animation-duration</code> on the chart with CSS. The randomised data also includes a randomised time interval to show how the line and points are animated. We'll make the y-axis gridlines silver.</p>
+				<div class="example-code">
+					<style>
+					#chart_update { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_update"></div>
+					<button id="random3">Randomise data</button>
+					<script>
+					OI.ready(function(){
+						chart_update = OI.linechart(document.getElementById('chart_update'),{
+							'left':60,
+							'right':10,
+							'top':10,
+							'bottom':50,
+							'axis':{
+								'x':{
+									'line': {'stroke-width':2},
+									'title': { 'label': 'Hour' },
+									'labels':{
+										0: {'label':0},
+										4: {'label':"4am"},
+										8: {'label':"8am"},
+										12: {'label':"Noon"},
+										16: {'label':"4pm"},
+										20: {'label':"8pm"}
+									}
+								},
+								'y':{
+									'line': {'stroke-width': 2},
+									'grid': {'show':true,'stroke':'silver'},
+									'min': 0,
+									'max': 100,
+									'title':{ 'label':'Value' },
+									'labels':{
+										0: {'label':0},
+										25: {'label':25},
+										50: {'label':50},
+										75: {'label':75},
+										100: {'label':100}
+									}
+								}
+							}
+						});
+						chart_update.addSeries(makeHourlyData(),{
+							'title': 'Views',
+							'points':{ 'size': 3, 'color': '#FF6700' },
+							'line': { 'show': true, 'color': '#FF6700', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									var t,hh,mm;
+									hh = Math.floor(d.data.x%12);
+									mm = Math.round(60*(d.data.x%12 - Math.floor(d.data.x%12)))+"";
+									if(mm.length==1) mm = '0'+mm;
+									if(hh.length==1) hh = '0'+hh;
+									if(d.data.x == 12) t = "Noon";
+									else if(d.data.x == 24) t = "Midnight";
+									else if(d.data.x < 12) t = hh+':'+mm+"am";
+									else if(d.data.x > 12 && d.data.x < 24) t = hh+':'+mm+"pm";
+									return ''+d.series.title+'\n'+t+': '+d.data.y;
+								}
+							}
+						});
 						chart_update.draw();
+
+						document.getElementById('random3').addEventListener('click',function(e){
+							e.preventDefault();
+							r = Math.floor(Math.random()*10)
+							if(r < 4) chart_update.series[0].setData(makeHourlyData(1,24));
+							else if(r > 7) chart_update.series[0].setData(makeHourlyData(0.5,48));
+							else chart_update.series[0].setData(makeHourlyData(0.25,96));
+							chart_update.draw();
+						});
 					});
-				});
-				function makeHourlyData(step=1,steps=24){
-					data = [];
-					h = 40;
-					for(var s = 0; s < steps; s++){
-						x = ((s+1)*step);
-						data.push({x:x,y:Math.round(Math.random()*h)+(x > 8 && x < 17 ? 60 : 0)});
+					function makeHourlyData(step=1,steps=24){
+						data = [];
+						h = 40;
+						for(var s = 0; s < steps; s++){
+							x = ((s+1)*step);
+							data.push({x:x,y:Math.round(Math.random()*h)+(x > 8 && x < 17 ? 60 : 0)});
+						}
+						return data;
 					}
-					return data;
-				}
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
-		<section class="example" id="dashed-line">
-			<h2>Dashed line</h2>
-			<p>This chart has a dashed line by setting the <code>stroke-dasharray</code> property.</p>
-			<div class="example-code">
-				<style>
-				#chart_dashed { height: 400px; width: 100%; padding: 2em; }
-				</style>
-				<div id="chart_dashed"></div>
-				<script>
-				OI.ready(function(){
-					chart_dashed = OI.linechart(document.getElementById('chart_dashed'),{
-						'left':20,
-						'right':50,
-						'top':0,
-						'bottom':8,
-						'axis':{
-							'x':{
-								'line': {'stroke':'#888'},
-								'labels':{
-									2014: {'label':'2014'},
-									2015: {'label':"'15"},
-									2016: {'label':"'16"},
-									2017: {'label':"'17"},
-									2018: {'label':"'18"},
-									2019: {'label':"'19"},
-									2020: {'label':"2020"}
+			<section class="example" id="dashed-line">
+				<h2>Dashed line</h2>
+				<p>This chart has a dashed line by setting the <code>stroke-dasharray</code> property.</p>
+				<div class="example-code">
+					<style>
+					#chart_dashed { height: 400px; width: 100%; }
+					</style>
+					<div id="chart_dashed"></div>
+					<script>
+					OI.ready(function(){
+						chart_dashed = OI.linechart(document.getElementById('chart_dashed'),{
+							'left':48,
+							'right':0,
+							'top':0,
+							'bottom':20,
+							'axis':{
+								'x':{
+									'line': {'stroke':'#888'},
+									'labels':{
+										2014: {'label':'2014'},
+										2015: {'label':"'15"},
+										2016: {'label':"'16"},
+										2017: {'label':"'17"},
+										2018: {'label':"'18"},
+										2019: {'label':"'19"},
+										2020: {'label':"2020"}
+									}
+								},
+								'y':{
+									'line': {'show':false},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										0: {'label':'0'},
+										50: {'label':'50M'},
+										100: {'label':'100M'},
+										150: {'label':'150M'}
+									}
 								}
-							},
-							'y':{
-								'line': {'show':false},
-								'grid': {'show':true,'stroke':'#888'},
-								'labels':{
-									0: {'label':'0'},
-									50: {'label':'50M'},
-									100: {'label':'100M'},
-									150: {'label':'150M'}
+							}
+						});
+						chart_dashed.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
+							'title': 'Measured',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
 								}
 							}
-						}
-					});
-					chart_dashed.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
-						'title': 'Measured',
-						'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+						});
+						chart_dashed.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
+							'title': 'Projected',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2, 'stroke-dasharray': '5,5' },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+								}
 							}
-						}
+						});
+						chart_dashed.draw();
 					});
-					chart_dashed.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
-						'title': 'Projected',
-						'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2, 'stroke-dasharray': '5,5' },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
-							}
-						}
-					});
-					chart_dashed.draw();
-				});
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
-		<section class="example" id="label-alignment">
-			<h2>Label alignment</h2>
-			<p>Let's adjust the placement of the labels. We can align them to the right and top with <code>align</code>. We can custom-align the <code>text-anchor</code> of the labels. We can explicitly set the label offset from the tick marks using <code>offset</code>. We can explicitly set the <code>ticksize</code> per tick.</p>
-			<div class="example-code">
-				<style>
-				#chart_alignment { height: 400px; width: 100%; padding: 2em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_alignment"></div>
-				<script>
-				OI.ready(function(){
-					chart_alignment = OI.linechart(document.getElementById('chart_alignment'),{
-						'left':20,
-						'right':50,
-						'top':60,
-						'bottom':8,
-						'axis':{
-							'x':{
-								'line': {'stroke':'#888'},
-								'grid': {'show':true,'stroke':'#888'},
-								'labels':{
-									2014: {'label':'2014','align':'top','offset':10,'text-anchor':'start'},
-									2015: {'label':"'15",'align':'top','offset':10},
-									2016: {'label':"'16",'align':'top','offset':10},
-									2017: {'label':"'17",'align':'top','offset':10},
-									2018: {'label':"'18",'align':'top','offset':10},
-									2019: {'label':"'19",'align':'top','offset':10},
-									2020: {'label':"2020",'align':'top','offset':10,'text-anchor':'end'}
+			<section class="example" id="label-alignment">
+				<h2>Label alignment</h2>
+				<p>Let's adjust the placement of the labels. We can align them to the right and top with <code>align</code>. We can custom-align the <code>text-anchor</code> of the labels. We can explicitly set the label offset from the tick marks using <code>offset</code>. We can explicitly set the <code>ticksize</code> per tick.</p>
+				<div class="example-code">
+					<style>
+					#chart_alignment { height: 400px; width: 100%; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_alignment"></div>
+					<script>
+					OI.ready(function(){
+						chart_alignment = OI.linechart(document.getElementById('chart_alignment'),{
+							'left':0,
+							'right':56,
+							'top':28,
+							'bottom':4,
+							'axis':{
+								'x':{
+									'line': {'stroke':'#888'},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										2014: {'label':'2014','align':'top','offset':10,'text-anchor':'start'},
+										2015: {'label':"'15",'align':'top','offset':10},
+										2016: {'label':"'16",'align':'top','offset':10},
+										2017: {'label':"'17",'align':'top','offset':10},
+										2018: {'label':"'18",'align':'top','offset':10},
+										2019: {'label':"'19",'align':'top','offset':10},
+										2020: {'label':"2020",'align':'top','offset':10,'text-anchor':'end'}
+									}
+								},
+								'y':{
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										0: {'label':'0','align':'right','offset':10},
+										50: {'label':'50M','align':'right','offset':10},
+										100: {'label':'100M','align':'right','offset':10},
+										150: {'label':'150M','align':'right','offset':10}
+									}
 								}
-							},
-							'y':{
-								'grid': {'show':true,'stroke':'#888'},
-								'labels':{
-									0: {'label':'0','align':'right','offset':10},
-									50: {'label':'50M','align':'right','offset':10},
-									100: {'label':'100M','align':'right','offset':10},
-									150: {'label':'150M','align':'right','offset':10}
+							}
+						});
+						chart_alignment.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
+							'title': 'Measured',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
 								}
 							}
-						}
-					});
-					chart_alignment.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
-						'title': 'Measured',
-						'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+						});
+						chart_alignment.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
+							'title': 'Projected',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+								}
 							}
-						}
+						});
+						chart_alignment.draw();
 					});
-					chart_alignment.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
-						'title': 'Projected',
-						'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
-							}
-						}
-					});
-					chart_alignment.draw();
-				});
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
-		<section class="example" id="style-tooltip">
-			<h2>Style tooltip (darker charts)</h2>
-			<p>Sometimes we need to customise the tooltip e.g. if we've changed the chart background colour. We do that in the CSS. We can also customise the text in the tooltip per data series by defining a <code>tooltip label</code> function.</p>
-			<div class="example-code">
-				<style>
-				#chart_style_tooltip { height: 400px; width: 100%; background: #111; padding: 2em; position: relative; animation-duration: 0.3s; }
-				#chart_style_tooltip .linechart-tooltip { background: white; color: black; box-shadow: 2px 2px 3px rgba(0,0,0,0.3); padding: 0.5em 1em; }
-				#chart_style_tooltip .linechart-tooltip::after { border-top-color: white; }
-				</style>
-				<div id="chart_style_tooltip"></div>
-				<script>
-				OI.ready(function(){
-					chart_style_tooltip = OI.linechart(document.getElementById('chart_style_tooltip'),{
-						'left':40,
-						'right':0,
-						'top':0,
-						'bottom':8,
-						'axis':{
-							'x':{
-								'line': {'stroke':'#888'},
-								'grid': {'show':true,'stroke':'#888'},
-								'labels':{
-									2014: {'label':'2014','fill':'#888'},
-									2015: {'label':"'15",'fill':'#888'},
-									2016: {'label':"'16",'fill':'#888'},
-									2017: {'label':"'17",'fill':'#888'},
-									2018: {'label':"'18",'fill':'#888'},
-									2019: {'label':"'19",'fill':'#888'},
-									2020: {'label':"2020",'fill':'#888'}
+			<section class="example" id="style-tooltip">
+				<h2>Style tooltip (darker charts)</h2>
+				<p>Sometimes we need to customise the tooltip e.g. if we've changed the chart background colour. We do that in the CSS. We can also customise the text in the tooltip per data series by defining a <code>tooltip label</code> function.</p>
+				<div class="example-code">
+					<style>
+					#chart_style_tooltip { height: 400px; width: 100%; padding: 1em; background: #111; position: relative; animation-duration: 0.3s; }
+					#chart_style_tooltip .linechart-tooltip { background: white; color: black; box-shadow: 2px 2px 3px rgba(0,0,0,0.3); padding: 0.5em 1em; }
+					#chart_style_tooltip .linechart-tooltip::after { border-top-color: white; }
+					</style>
+					<div id="chart_style_tooltip"></div>
+					<script>
+					OI.ready(function(){
+						chart_style_tooltip = OI.linechart(document.getElementById('chart_style_tooltip'),{
+							'left':48,
+							'right':0,
+							'top':0,
+							'bottom':20,
+							'axis':{
+								'x':{
+									'line': {'stroke':'#888'},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										2014: {'label':'2014','fill':'#888'},
+										2015: {'label':"'15",'fill':'#888'},
+										2016: {'label':"'16",'fill':'#888'},
+										2017: {'label':"'17",'fill':'#888'},
+										2018: {'label':"'18",'fill':'#888'},
+										2019: {'label':"'19",'fill':'#888'},
+										2020: {'label':"2020",'fill':'#888','text-anchor':'end'}
+									}
+								},
+								'y':{
+									'line': {'show':false},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										0: {'label':'0','fill':'white'},
+										50: {'label':'50M','fill':'white'},
+										100: {'label':'100M','fill':'white'},
+										150: {'label':'150M','fill':'white'}
+									}
 								}
-							},
-							'y':{
-								'line': {'show':false},
-								'grid': {'show':true,'stroke':'#888'},
-								'labels':{
-									0: {'label':'0','fill':'white'},
-									50: {'label':'50M','fill':'white'},
-									100: {'label':'100M','fill':'white'},
-									150: {'label':'150M','fill':'white'}
+							}
+						});
+						chart_style_tooltip.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
+							'title': 'Measured',
+							'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
 								}
 							}
-						}
-					});
-					chart_style_tooltip.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
-						'title': 'Measured',
-						'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+						});
+						chart_style_tooltip.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
+							'title': 'Projected',
+							'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+								}
 							}
-						}
+						});
+						chart_style_tooltip.draw();
 					});
-					chart_style_tooltip.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
-						'title': 'Projected',
-						'points': {'show':true,'size':4,'stroke':'white','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
-						'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
-						'tooltip':{
-							'label': function(d){
-								return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
-							}
-						}
-					});
-					chart_style_tooltip.draw();
-				});
-				</script>
-			</div>
-		</section>
+					</script>
+				</div>
+			</section>
 
-		<section class="example" id="tick-marks">
-			<h2>Tick marks</h2>
-			<p>There are times when you may wish that some tick marks are labelled and others are not and you might want the ticks to be different lengths. You can set the <code>ticksize</code> per tick. You can add ticks that have <code>label</code> empty or missing.</p>
-			<div class="example-code">
-				<style>
-				#chart_tick_marks { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
-				</style>
-				<div id="chart_tick_marks"></div>
-				<script>
-				OI.ready(function(){
-					chart_tick_marks = OI.linechart(document.getElementById('chart_tick_marks'),{
-						'left':32,
-						'right':10,
-						'top':10,
-						'bottom':60,
-						'axis':{
-							'x':{
-								'min': 0,
-								'max': 24,	
-								'title': { 'label': 'Hour of day' },
-								'labels':{
-									0: {'label':0,'ticksize':12},
-									1: {},
-									2: {},
-									3: {},
-									4: {'label':"4am",'ticksize':12},
-									5: {},
-									6: {},
-									7: {},
-									8: {'label':"8am",'ticksize':12},
-									9: {},
-									10: {},
-									11: {},
-									12: {'label':"Noon",'ticksize':12},
-									13: {},
-									14: {},
-									15: {},
-									16: {'label':"4pm",'ticksize':12},
-									17: {},
-									18: {},
-									19: {},
-									20: {'label':"8pm",'ticksize':12},
-									21: {},
-									22: {},
-									23: {},
-									24: {}
-								}
-							},
-							'y':{
-								'grid': {'show':true},
-								'min': -50,
-								'max': 50,
-								'labels':{
-									"-50": {'label':-50},
-									"-25": {'label':-25},
-									0: {'label':0},
-									25: {'label':25},
-									50: {'label':50},
-									75: {'label':75}
+			<section class="example" id="tick-marks">
+				<h2>Tick marks</h2>
+				<p>There are times when you may wish that some tick marks are labelled and others are not and you might want the ticks to be different lengths. You can set the <code>ticksize</code> per tick. You can add ticks that have <code>label</code> empty or missing.</p>
+				<div class="example-code">
+					<style>
+					#chart_tick_marks { height: 400px; width: 100%; margin-top: 1em; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_tick_marks"></div>
+					<script>
+					OI.ready(function(){
+						chart_tick_marks = OI.linechart(document.getElementById('chart_tick_marks'),{
+							'left':32,
+							'right':0,
+							'top':8,
+							'bottom':60,
+							'axis':{
+								'x':{
+									'min': 0,
+									'max': 24,	
+									'title': { 'label': 'Hour of day' },
+									'labels':{
+										0: {'label':0,'ticksize':12},
+										1: {},
+										2: {},
+										3: {},
+										4: {'label':"4am",'ticksize':12},
+										5: {},
+										6: {},
+										7: {},
+										8: {'label':"8am",'ticksize':12},
+										9: {},
+										10: {},
+										11: {},
+										12: {'label':"Noon",'ticksize':12},
+										13: {},
+										14: {},
+										15: {},
+										16: {'label':"4pm",'ticksize':12},
+										17: {},
+										18: {},
+										19: {},
+										20: {'label':"8pm",'ticksize':12},
+										21: {},
+										22: {},
+										23: {},
+										24: {}
+									}
+								},
+								'y':{
+									'grid': {'show':true},
+									'min': -50,
+									'max': 50,
+									'labels':{
+										"-50": {'label':-50},
+										"-25": {'label':-25},
+										0: {'label':0},
+										25: {'label':25},
+										50: {'label':50},
+										75: {'label':75}
+									}
 								}
 							}
-						}
-					});
-					chart_tick_marks.addSeries(makeDailyData(),{
-						'title': 'Measured',
-						'points':{ 'size': 3, 'color': '#FF6700' },
-						'line': { 'show': true, 'color': '#FF6700', 'stroke-width': 2, 'stroke-dasharray': '5,5' },
-						'tooltip':{
-							'label': function(d){
-								v = [d.data.x-0.5,d.data.x+0.5];
-								hh = "";
-								for(i = 0; i < v.length; i++){
-									if(hh) hh += ' - ';
-									if(v[i] == 12) hh += "Noon";
-									else if(v[i] == 24) hh += "Midnight";
-									else if(v[i] < 12) hh += v[i]+"am";
-									else if(v[i] > 12 && v[i] < 24) hh += (v[i]%12)+"pm";
+						});
+						chart_tick_marks.addSeries(makeDailyData(),{
+							'title': 'Measured',
+							'points':{ 'size': 3, 'color': '#FF6700' },
+							'line': { 'show': true, 'color': '#FF6700', 'stroke-width': 2, 'stroke-dasharray': '5,5' },
+							'tooltip':{
+								'label': function(d){
+									v = [d.data.x-0.5,d.data.x+0.5];
+									hh = "";
+									for(i = 0; i < v.length; i++){
+										if(hh) hh += ' - ';
+										if(v[i] == 12) hh += "Noon";
+										else if(v[i] == 24) hh += "Midnight";
+										else if(v[i] < 12) hh += v[i]+"am";
+										else if(v[i] > 12 && v[i] < 24) hh += (v[i]%12)+"pm";
+									}
+									return hh+': '+d.data.y.toFixed(2);
 								}
-								return hh+': '+d.data.y.toFixed(2);
 							}
-						}
+						});
+						chart_tick_marks.draw();
 					});
-					chart_tick_marks.draw();
-				});
-				function makeDailyData(){
-					data = [];
-					w = 24;
-					h = 40;
-					for(x = 0; x < w; x++) data.push({x:x+0.5,y:(Math.random()*h - h/2)});
-					return data;
-				}
-				</script>
-			</div>
-		</section>
+					function makeDailyData(){
+						data = [];
+						w = 24;
+						h = 40;
+						for(x = 0; x < w; x++) data.push({x:x+0.5,y:(Math.random()*h - h/2)});
+						return data;
+					}
+					</script>
+				</div>
+			</section>
+
+
+
+			<section class="example" id="update-range">
+				<h2>Update range</h2>
+
+				<div class="example-code">
+					<style>
+					#chart_update_range { height: 400px; width: 100%; position: relative; animation-duration: 0.3s; }
+					</style>
+					<div id="chart_update_range"></div>
+					<script>
+					OI.ready(function(){
+						chart_update_range = OI.linechart(document.getElementById('chart_update_range'),{
+							'left':48,
+							'right':0,
+							'top':0,
+							'bottom':20,
+							'axis':{
+								'x':{
+									'line': {'stroke':'#888'},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										2014: {'label':'2014'},
+										2015: {'label':"'15"},
+										2016: {'label':"'16"},
+										2017: {'label':"'17"},
+										2018: {'label':"'18"},
+										2019: {'label':"'19"},
+										2020: {'label':"2020",'text-anchor':'end'}
+									}
+								},
+								'y':{
+									'line': {'stroke':'#888'},
+									'grid': {'show':true,'stroke':'#888'},
+									'labels':{
+										0: {'label':'0'},
+										50: {'label':'50M'},
+										100: {'label':'100M'},
+										150: {'label':'150M'}
+									}
+								}
+							}
+						});
+						chart_update_range.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:50},{x:2017,y:120},{x:2018,y:130},{x:2019,y:34},{x:2020,y:0}],{
+							'title': 'Measured',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+								}
+							}
+						});
+						chart_update_range.addSeries([{x:2014,y:40},{x:2015,y:53},{x:2016,y:60},{x:2017,y:135},{x:2018,y:151},{x:2019,y:154},{x:2020,y:154}],{
+							'title': 'Projected',
+							'points': {'show':true,'size':4,'stroke':'black','stroke-width':0,'color':'#00B6FF','fill-opacity':0.01},
+							'line': { 'show': true, 'color': '#00B6FF', 'stroke-width': 2 },
+							'tooltip':{
+								'label': function(d){
+									return ''+d.series.title+'\n'+d.data.x+': &pound;'+Math.round(d.data.y)+' million';
+								}
+							}
+						});
+						chart_update_range.draw();
+						chart_update_range.setProperties({'axis':{'y':{'min':25,'max':125}}});
+						chart_update_range.draw();
+					});
+					</script>
+				</div>
+			</section>
+
 		</div>
 	</div>
 	<footer>
@@ -757,11 +834,9 @@
 		<p>&copy; 2021 <a href="https://open-innovations.org/" target="_parent">Open Innovations</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_parent">CC BY</a>). Find the <a href="https://github.com/open-innovations/oi.linechart.js">code on Github</a>.</p>
 		</div>
 	</footer>
-	<!--
 	<script src="https://open-innovations.org/resources/oi.log.js"></script>
 	<script>
 	OI.log.setup({'id':'odileeds','target':['open-innovations.github.io','odileeds.github.io']}).add('action=view');
 	</script>
-	-->
 </body>
 </html>

@@ -4,6 +4,8 @@
 	0.5.0
 		- better animation for lines/points when the number of points changes
 		- alter tick offset/size setting
+		- clip data to graph
+		- add attributes to axis labels and legend labels
   */
 (function(root){
 	// Part of the OI namespace
@@ -23,7 +25,7 @@
 			console.error('No element to attach to');
 			return this;
 		}
-		var w,h,ns,loader,svg,series,xmin,ymin,xmax,ymax,defs,key,duration,opt,axes,fo,lbl,events;
+		var w,h,ns,loader,svg,rect,series,xmin,ymin,xmax,ymax,defs,clip,key,duration,opt,axes,fo,lbl,events;
 		if(!attr) attr = {};
 
 		// Add loader icon to chart
@@ -46,11 +48,12 @@
 			'axis':{'x':{},'y':{}}
 		};
 		merge(opt,attr);
+		var id = Math.round(Math.random()*1e8);
 
 		// Create SVG container
 		if(!svg){
 			svg = svgEl('svg');
-			setAttr(svg,{'xmlns':ns,'version':'1.1','width':w,'height':h,'viewBox':'0 0 '+w+' '+h,'overflow':'visible','style':'max-width:100%;','preserveAspectRatio':'xMinYMin meet'});
+			setAttr(svg,{'xmlns':ns,'version':'1.1','width':w,'height':h,'viewBox':'0 0 '+w+' '+h,'overflow':'visible','style':'max-width:100%;','preserveAspectRatio':'none'});
 			defs = svgEl('defs');
 			add(defs,svg);
 			add(svg,el);
@@ -58,6 +61,12 @@
 			fo = svgEl("foreignObject");
 			setAttr(fo,{'width':1,'height':1,'overflow':'visible'});
 			add(fo,svg);
+			clip = svgEl("clipPath");
+			setAttr(clip,{'id':'clip-'+id});
+			add(clip,svg);
+			rect = svgEl("rect");
+			setAttr(rect,{'x':0,'y':0,'width':w,'height':h});
+			add(rect,clip);
 		}
 		axes = {x:new Axis("x",opt.left,w-opt.right-opt.left),y:new Axis("y",opt.bottom,h-opt.top-opt.bottom)};
 		axes.x.setProperties(opt.axis.x||{});
@@ -66,7 +75,7 @@
 		this.on = function(ev,attr,cb){
 			if(typeof attr==="function"){
 				cb = clone(attr);
-				delete attr;
+        attr = {};
 			}
 			events[ev] = new Event(attr,cb);
 			return this;
@@ -74,7 +83,7 @@
 		this.off = function(ev){
 			delete events[ev];
 			return this;
-		}
+		};
 		this.getSVG = function(){
 			svg.querySelectorAll('animate').forEach(function(e){ e.parentNode.removeChild(e); });
 			return svg.outerHTML;
@@ -94,7 +103,7 @@
 				var a = attr;
 				merge(a,props);
 				cb.call(a['this']||this,a);
-			}
+			};
 		}
 		function onClick(e,i){
 			if(fo && events.click) events.click.trigger({'i':i});
@@ -163,7 +172,7 @@
 				else return null;
 			};
 			this.update = function(){
-				var t,x,y,pos,len,align,talign,tx,ty;
+				var t,x,y,pos,len,align,talign,tx,ty,baseline,xsign,ysign;
 				if(!attr.labels) attr.labels = {};
 				this.title.innerHTML = attr.title.label||"";
 				x = (ax=="x" ? (opt.left + (w-opt.right-opt.left)/2):fs/2);
@@ -258,8 +267,8 @@
 		// Define a data series
 		function Series(s,data,props){
 			if(!data) data = [];
-			var attr,line,path,pts,o;
-			attr = {points:{show:true,color:'black','stroke-linecap':'round','stroke':'black','stroke-width':0,'fill-opacity':1},line:{show:true,color:'#000000','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round','stroke-dasharray':'','fill':'none'}};
+			var attr,line,path,pts,o,label;
+			attr = {points:{show:true,color:'black','stroke-linecap':'round','stroke':'black','stroke-width':0,'fill-opacity':1},line:{show:true,color:'#000000','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round','stroke-dasharray':'','fill':'none'},'attr':props.attr||{}};
 			line = {};
 			path = "";
 			pts = [];
@@ -267,7 +276,7 @@
 
 			// Build group
 			this.el = svgEl("g");
-			o = {'id':(attr.id||'series-'+(s+1))};
+			o = {'clip-path':'url(#clip-'+id+')'};
 			o[lbl+'-series'] = (s+1);
 			setAttr(this.el,o);
 			addClasses(this.el,[lbl+'-series',lbl+'-series-'+(s+1)]);
@@ -285,7 +294,7 @@
 				if(i >= 0 && pts[i].el) ptooltip({'target':pts[i].el});
 				else clearTooltip();
 				return this;
-			}
+			};
 			this.deselect = function(){
 				line.el.classList.remove('on');
 				return this;
@@ -372,11 +381,11 @@
 					if(attr.line.label){
 						label = svgEl("text");
 						label.innerHTML = attr.title;
-						var props = getXY(data[pts.length-1].x,data[pts.length-1].y);
-						props['dominant-baseline'] = "middle";
-						props.fill = (attr.line.color||'black');
-						if(attr.line.label.padding) props.x += attr.line.label.padding;
-						setAttr(label,props);
+						var nprops = getXY(data[pts.length-1].x,data[pts.length-1].y);
+						nprops['dominant-baseline'] = "middle";
+						nprops.fill = (attr.line.color||'black');
+						if(attr.line.label.padding) nprops.x += attr.line.label.padding;
+						setAttr(label,nprops);
 						add(label,this.el);
 					}
 				}
@@ -412,7 +421,7 @@
 			};
 			this.remove = function(){
 				if(line.el.parentNode) line.el.parentNode.removeChild(line.el);
-				for(i = 0; i < pts.length; i++){
+				for(var i = 0; i < pts.length; i++){
 					if(pts[i].el.parentNode) pts[i].el.parentNode.removeChild(pts[i].el);
 				}
 			};
@@ -507,20 +516,20 @@
 			if(typeof axes.y.getProperty('max')==="number") ymax = axes.y.getProperty('max');
 		}
 		function selectSeries(e){
-			var s = parseInt(e.currentTarget.closest('g').getAttribute(lbl+'-series'))-1;
+			var s = parseInt(e.currentTarget.closest('g').getAttribute(lbl+'-series'));
 			for(var i = 0; i < series.length; i++){
 				if(s==i) series[i].select();
 				else series[i].deselect();
 			}
 			// Move series to top
-			add(series[s].el,series[s].el.closest('svg'));
+			add(series[s].el,series[s].el.closest('svg'),key);
 			if(key) add(key.el,key.el.closest('svg'));
 			// Keep tooltip on top
-			qs(e.target.parentNode,'circle').focus();
+			qs(e.target.closest('g'),'circle').focus();
 			add(fo,svg);
 		}
 		this.draw = function(){
-			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl;
+			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl,po;
 
 			clearTooltip();
 
@@ -570,12 +579,21 @@
 						key.g[s].addEventListener('mouseover',selectSeries);
 					}
 					key.g[s].innerHTML = '<text><tspan dx="'+(fs*2)+'" dy="0">'+(series[s].getProperty('title')||"Series "+(s+1))+'</tspan></text><path d="M0 0 L 1 0" class="line" class="" stroke-width="3" stroke-linecap="round"></path><circle cx="0" cy="0" r="5" fill="silver"></circle>';
+					setAttr(key.g[s].querySelector('tspan'),series[s].getProperty('attr'));
 					wkey = Math.max(wkey,key.g[s].getBoundingClientRect().width);
 				}
 
-				x = (w-opt.right-wkey-pd);
-				y = (opt.top);
-				setAttr(key.border,{'x':x,'width':wkey+pd});
+				if(!opt.key.position) opt.key.position = 'top right';
+				po = opt.key.position.split(/ /);
+
+				x = y = 0;
+				for(t = 0; t < po.length; t++){
+					if(po[t]=="left") x = opt.left+pd;
+					else if(po[t]=="right") x = (w-opt.right-wkey-pd);
+					else if(po[t]=="top") y = opt.top+pd;
+					else if(po[t]=="bottom") y = h-opt.bottom-pd-hkey;
+				}
+				setAttr(key.border,{'x':x,'width':wkey+pd,'y':y});
 				y += pd;
 				x += pd;
 				for(s = 0; s < series.length; s++){
