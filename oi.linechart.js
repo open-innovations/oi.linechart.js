@@ -137,12 +137,16 @@
 			tip.setAttribute('style','position:absolute;left:'+Math.round(bb.left + bb.width/2 - bbo.left + el.scrollLeft)+'px;top:'+Math.round(bb.top + bb.height/2 - bbo.top)+'px;transform:translate3d(-50%,-100%,0);display:'+(txt ? 'block':'none'));
 			add(fo,svg);
 			if(events.showtooltip) events.showtooltip.trigger({'i':i});
+			var lista = document.getElementsByTagName("circle");
+			for (var i = 0; i < lista.length; i++) lista[i].style.outline="none";
 			return true;
 		}
 		function clearTooltip(){
 			var tip = qs(svg,'.'+lbl+'-tooltip');
 			if(tip) tip.parentNode.removeChild(tip);
 			if(events.hidetooltip) events.hidetooltip.trigger();
+			var lista = document.getElementsByTagName("circle");
+			for (var i = 0; i < lista.length; i++) lista[i].style.strokeWidth = "";
 			return true;
 		}
 		function getXY(x,y){
@@ -292,7 +296,6 @@
 			};
 			this.selectItem = function(i){
 				if(i >= 0 && pts[i].el) ptooltip({'target':pts[i].el});
-				else clearTooltip();
 				return this;
 			};
 			this.deselect = function(){
@@ -330,7 +333,7 @@
 				return this;
 			};
 			this.update = function(){
-				var c,i,pt,txt,p,r,ps,o;
+				var c,i,pt,txt,p,r,ps,o,clr;
 				// Check if we need to add a line
 				if(!line.el){
 					line.el = svgEl("path");
@@ -339,7 +342,6 @@
 					add(line.el,this.el); // Add it to the element
 					// Create an animation for the line
 					line.animate = new Animate(line.el);
-					line.el.addEventListener('click',selectSeries);
 				}
 				setAttr(line.el,{'style':(attr.line.show ? 'display:block':'display:none'),'stroke':(attr.line.color||'black'),'stroke-width':this.getStyle('line','stroke-width'),'stroke-linecap':this.getStyle('line','stroke-linecap'),'stroke-linejoin':this.getStyle('line','stroke-linejoin'),'stroke-dasharray':this.getStyle('line','stroke-dasharray'),'fill':this.getStyle('line','fill'),'vector-effect':'non-scaling-stroke'});
 				// Remove extraneous points
@@ -366,8 +368,12 @@
 						add(pts[i].title,pt);
 
 						if(attr.tooltip.label){
-							pt.addEventListener('mouseover',function(e){ e.target.focus(); });
-							pt.addEventListener('focus',ptooltip);
+							pt.addEventListener('mouseover',function(e) {
+								ptooltip(e);
+								var lista = document.getElementsByTagName("circle");
+								for (var i = 0; i < lista.length; i++) lista[i].style.strokeWidth = "";
+								this.style.strokeWidth = "4px";
+							});
 						}
 						pt.addEventListener('click',function(e){
 							var i = parseInt(e.target.getAttribute('data-i'));
@@ -398,8 +404,10 @@
 					if(attr.points){
 						if(typeof attr.points.size==="number") r = Math.max(attr.points.size,r);
 						if(typeof attr.points.size==="function") r = attr.points.size.call(pt,{'series':s,'i':i,'data':data[i]});
+						if(typeof attr.points.color==="string") clr = attr.points.color;
+						if(typeof attr.points.color==="function") clr = attr.points.color.call(pt,{'series':s,'i':i,'data':data[i]});
 					}
-					setAttr(pts[i].el,{'r':r,'fill':attr.points.color,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
+					setAttr(pts[i].el,{'r':r,'fill':clr,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
 					ps = getXY(data[i].x,data[i].y);
 					p.push(ps);
 					// Keep a copy 
@@ -529,7 +537,7 @@
 			add(fo,svg);
 		}
 		this.draw = function(){
-			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl,po;
+			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl,po,clr;
 
 			clearTooltip();
 
@@ -542,10 +550,8 @@
 			t = '<style>';
 			t += '\t.'+lbl+'-series circle { transition: transform '+duration+' linear, r '+duration+' linear; }\n';
 			t += '\t.'+lbl+'-series circle:focus { stroke-width: 4; }\n';
-			t += '\t.'+lbl+'-series:hover path.line, .'+lbl+'-series.on path.line { cursor:pointer; }\n';
 			for(i = 0; i < series.length; i++){
 				series[i].update();
-				t += '\t.'+lbl+'-series-'+(i+1)+':hover path.line, .'+lbl+'-series-'+(i+1)+'.on path.line { stroke-width: '+(series[i].getProperty('stroke-width-hover')||4)+'; }\n';
 			}
 
 			if(opt.key.show){
@@ -576,7 +582,6 @@
 						addClasses(key.g[s],cl);
 
 						add(key.g[s],key.el);
-						key.g[s].addEventListener('mouseover',selectSeries);
 					}
 					key.g[s].innerHTML = '<text><tspan dx="'+(fs*2)+'" dy="0">'+(series[s].getProperty('title')||"Series "+(s+1))+'</tspan></text><path d="M0 0 L 1 0" class="line" class="" stroke-width="3" stroke-linecap="round"></path><circle cx="0" cy="0" r="5" fill="silver"></circle>';
 					setAttr(key.g[s].querySelector('tspan'),series[s].getProperty('attr'));
