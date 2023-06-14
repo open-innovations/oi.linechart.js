@@ -330,7 +330,7 @@
 				return this;
 			};
 			this.update = function(){
-				var c,i,pt,txt,p,r,ps,o;
+				var c,i,pt,txt,p,r,ps,o,clr;
 				// Check if we need to add a line
 				if(!line.el){
 					line.el = svgEl("path");
@@ -398,8 +398,10 @@
 					if(attr.points){
 						if(typeof attr.points.size==="number") r = Math.max(attr.points.size,r);
 						if(typeof attr.points.size==="function") r = attr.points.size.call(pt,{'series':s,'i':i,'data':data[i]});
+						if(typeof attr.points.color==="string") clr = attr.points.color;
+						if(typeof attr.points.color==="function") clr = attr.points.color.call(pt,{'series':s,'i':i,'data':data[i]});
 					}
-					setAttr(pts[i].el,{'r':r,'fill':attr.points.color,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
+					setAttr(pts[i].el,{'r':r,'fill':clr,'fill-opacity':attr.points['fill-opacity'],'stroke':attr.points.stroke,'stroke-width':attr.points['stroke-width']});
 					ps = getXY(data[i].x,data[i].y);
 					p.push(ps);
 					// Keep a copy 
@@ -529,7 +531,7 @@
 			add(fo,svg);
 		}
 		this.draw = function(){
-			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl,po;
+			var t,i,fs,pd,hkey,wkey,x,y,s,text,line,circ,p,cl,po,clr;
 
 			clearTooltip();
 
